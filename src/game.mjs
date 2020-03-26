@@ -11,9 +11,24 @@ export class Game {
     this.canvas = canvas
     this.gameInterval = null
     this.score = 0
-    this.perspectiveCenter = { x: canvas.width / 2, y: canvas.height / 2 }
+    this.spaceshipPosition = { x: 0, y: 0 }
     this.board = new Board({ canvas, ctx })
     this.spaceship = new Spaceship({ canvas, ctx })
+  }
+
+  setWindowListeners = () => {
+    window.addEventListener('keydown', this.onKeyPress)
+  }
+
+  setWindowIntervals = () => {
+    window.setInterval(this.updateShipPosition, 200)
+  }
+
+  updateShipPosition = () => {
+    this.spaceshipPosition = {
+      ...this.spaceshipPosition,
+      y: this.spaceshipPosition.y + 1
+    }
   }
 
   clearCanvas = () => {
@@ -22,10 +37,30 @@ export class Game {
     this.ctx.clearRect(0, 0, width, height)
   }
 
-  updateScore = () => {
-  }
+  onKeyPress = ev => {
+    console.log(this.spaceshipPosition)
 
-  updateModels = () => {
+    switch (ev.key) {
+      case 'ArrowLeft': {
+        this.spaceshipPosition = {
+          ...this.spaceshipPosition,
+          x: this.spaceshipPosition.x - 1
+        }
+      }
+        break
+      case 'ArrowRight':
+        this.spaceshipPosition = {
+          ...this.spaceshipPosition,
+          x: this.spaceshipPosition.x + 1
+        }
+        break
+      case 'ArrowUp':
+        // Up pressed
+        break
+      case 'ArrowDown':
+        // Down pressed
+        break
+    }
   }
 
   render = () => {
@@ -33,11 +68,16 @@ export class Game {
     this.spaceship.render()
   }
 
+  stop = () => {
+    clearInterval(this.gameInterval)
+  }
+
   start = () => {
-    this.gameInterval = window.setInterval(() => {
+    this.setWindowListeners()
+    this.setWindowIntervals()
+
+    this.gameInterval = setInterval(() => {
       this.clearCanvas()
-      this.updateModels()
-      this.updateScore()
       this.render()
     }, config.gameUpdateInterval)
   }

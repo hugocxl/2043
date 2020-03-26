@@ -1,11 +1,12 @@
 'use strict'
 
 export class Spaceship {
-  constructor ({ canvas, ctx }) {
+  constructor ({ canvas, ctx, updatePosition }) {
     this.canvas = canvas
     this.ctx = ctx
     this.obstacles = []
     this.perspectiveCenter = null
+    this.updatePosition = updatePosition
   }
 
   render = () => {
