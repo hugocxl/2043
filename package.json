@@ -1,0 +1,22 @@
+{
+  "name": "ion",
+  "version": "1.0.0",
+  "description": "A html canvas-based game.",
+  "author": "Hugo Corta Lorenzo <corta.hugo@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hcorta/ion"
+  },
+  "homepage": "https://hcorta.github.io/ion",
+  "main": "index.js",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "browser-sync": "^2.24.4"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "browser-sync start --server --watch --serveStatic"
+  }
+}
