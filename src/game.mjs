@@ -1,11 +1,9 @@
 'use strict'
 
-import {
-  GAME_UPDATE_INTERVAL,
-} from './config.mjs'
+import { config } from './config/index.mjs'
 
-import { Board } from './board.mjs'
-import { Spaceship } from './spaceship.mjs'
+import { Board } from './models/board.mjs'
+import { Spaceship } from './models/spaceship.mjs'
 
 export class Game {
   constructor ({ ctx, canvas }) {
@@ -20,6 +18,7 @@ export class Game {
 
   clearCanvas = () => {
     const { height, width } = this.canvas
+
     this.ctx.clearRect(0, 0, width, height)
   }
 
@@ -27,8 +26,6 @@ export class Game {
   }
 
   updateModels = () => {
-    this.board.perspectiveCenter = this.perspectiveCenter
-    this.spaceship.perspectiveCenter = this.perspectiveCenter
   }
 
   render = () => {
@@ -42,6 +39,6 @@ export class Game {
       this.updateModels()
       this.updateScore()
       this.render()
-    }, GAME_UPDATE_INTERVAL)
+    }, config.gameUpdateInterval)
   }
 }

@@ -14,8 +14,6 @@ window.onload = function () {
     ctx,
   })
 
-  game.start()
-
   function setCanvasDimensions () {
     canvas.width = window.innerWidth
     canvas.height = window.innerHeight
