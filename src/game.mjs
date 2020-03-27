@@ -3,7 +3,7 @@
 import { config } from './config/index.mjs'
 
 import { Board } from './models/board.mjs'
-import { Spaceship } from './models/spaceship.mjs'
+import { Ship } from './models/ship.mjs'
 
 export class Game {
   constructor ({ ctx, canvas }) {
@@ -11,9 +11,9 @@ export class Game {
     this.canvas = canvas
     this.gameInterval = null
     this.score = 0
-    this.spaceshipPosition = { x: 0, y: 0 }
+    this.shipPosition = { x: 0, y: 0 }
     this.board = new Board({ canvas, ctx })
-    this.spaceship = new Spaceship({ canvas, ctx })
+    this.ship = new Ship({ canvas, ctx })
   }
 
   setWindowListeners = () => {
@@ -25,9 +25,9 @@ export class Game {
   }
 
   updateShipPosition = () => {
-    this.spaceshipPosition = {
-      ...this.spaceshipPosition,
-      y: this.spaceshipPosition.y + 1
+    this.shipPosition = {
+      ...this.shipPosition,
+      y: this.shipPosition.y + 1
     }
   }
 
@@ -38,20 +38,20 @@ export class Game {
   }
 
   onKeyPress = ev => {
-    console.log(this.spaceshipPosition)
+    console.log(this.shipPosition)
 
     switch (ev.key) {
       case 'ArrowLeft': {
-        this.spaceshipPosition = {
-          ...this.spaceshipPosition,
-          x: this.spaceshipPosition.x - 1
+        this.shipPosition = {
+          ...this.shipPosition,
+          x: this.shipPosition.x - 20
         }
       }
         break
       case 'ArrowRight':
-        this.spaceshipPosition = {
-          ...this.spaceshipPosition,
-          x: this.spaceshipPosition.x + 1
+        this.shipPosition = {
+          ...this.shipPosition,
+          x: this.shipPosition.x + 20
         }
         break
       case 'ArrowUp':
@@ -63,9 +63,14 @@ export class Game {
     }
   }
 
+  update = () => {
+    this.board.update()
+    this.ship.update(this.shipPosition)
+  }
+
   render = () => {
     this.board.render()
-    this.spaceship.render()
+    this.ship.render()
   }
 
   stop = () => {
@@ -78,6 +83,7 @@ export class Game {
 
     this.gameInterval = setInterval(() => {
       this.clearCanvas()
+      this.update()
       this.render()
     }, config.gameUpdateInterval)
   }

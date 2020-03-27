@@ -11,6 +11,7 @@
   "homepage": "https://hcorta.github.io/ion",
   "main": "index.js",
   "dependencies": {
+    "react": "^16.13.1"
   },
   "devDependencies": {
     "browser-sync": "^2.24.4"
