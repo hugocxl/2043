@@ -13,7 +13,7 @@ export class Game {
     this.score = 0
     this.perspectiveCenter = { x: canvas.width / 2, y: canvas.height / 2 }
     this.board = new Board({ canvas, ctx })
-    this.ship = new Ship({ canvas, ctx })
+    // this.ship = new Ship({ canvas, ctx })
   }
 
   setWindowListeners = () => {
@@ -34,14 +34,14 @@ export class Game {
       case 'ArrowLeft': {
         this.perspectiveCenter = {
           ...this.perspectiveCenter,
-          x: this.perspectiveCenter.x - 20
+          x: this.perspectiveCenter.x - 50
         }
       }
         break
       case 'ArrowRight':
         this.perspectiveCenter = {
           ...this.perspectiveCenter,
-          x: this.perspectiveCenter.x + 20
+          x: this.perspectiveCenter.x + 50
         }
         break
       case 'ArrowUp':
@@ -51,16 +51,18 @@ export class Game {
         // Down pressed
         break
     }
+
+    this.update()
   }
 
   update = () => {
     this.board.update(this.perspectiveCenter)
-    this.ship.update(this.perspectiveCenter)
+    // this.ship.update(this.perspectiveCenter)
   }
 
   render = () => {
     this.board.render()
-    this.ship.render()
+    // this.ship.render()
   }
 
   stop = () => {
@@ -70,10 +72,10 @@ export class Game {
   start = () => {
     this.setWindowListeners()
     this.setWindowIntervals()
+    this.board.init()
 
     this.gameInterval = setInterval(() => {
       this.clearCanvas()
-      this.update()
       this.render()
     }, config.gameUpdateInterval)
   }
