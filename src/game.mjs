@@ -11,7 +11,7 @@ export class Game {
     this.canvas = canvas
     this.gameInterval = null
     this.score = 0
-    this.shipPosition = { x: 0, y: 0 }
+    this.perspectiveCenter = { x: canvas.width / 2, y: canvas.height / 2 }
     this.board = new Board({ canvas, ctx })
     this.ship = new Ship({ canvas, ctx })
   }
@@ -21,14 +21,6 @@ export class Game {
   }
 
   setWindowIntervals = () => {
-    window.setInterval(this.updateShipPosition, 200)
-  }
-
-  updateShipPosition = () => {
-    this.shipPosition = {
-      ...this.shipPosition,
-      y: this.shipPosition.y + 1
-    }
   }
 
   clearCanvas = () => {
@@ -38,20 +30,18 @@ export class Game {
   }
 
   onKeyPress = ev => {
-    console.log(this.shipPosition)
-
     switch (ev.key) {
       case 'ArrowLeft': {
-        this.shipPosition = {
-          ...this.shipPosition,
-          x: this.shipPosition.x - 20
+        this.perspectiveCenter = {
+          ...this.perspectiveCenter,
+          x: this.perspectiveCenter.x - 20
         }
       }
         break
       case 'ArrowRight':
-        this.shipPosition = {
-          ...this.shipPosition,
-          x: this.shipPosition.x + 20
+        this.perspectiveCenter = {
+          ...this.perspectiveCenter,
+          x: this.perspectiveCenter.x + 20
         }
         break
       case 'ArrowUp':
@@ -64,8 +54,8 @@ export class Game {
   }
 
   update = () => {
-    this.board.update()
-    this.ship.update(this.shipPosition)
+    this.board.update(this.perspectiveCenter)
+    this.ship.update(this.perspectiveCenter)
   }
 
   render = () => {

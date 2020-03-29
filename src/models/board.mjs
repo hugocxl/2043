@@ -6,23 +6,21 @@ export class Board {
   constructor ({ canvas, ctx }) {
     this.canvas = canvas
     this.ctx = ctx
+    this.perspectiveCenter = null
     this.obstacles = [
       new Obstacle({
-        coordinates: [],
-        heigth: 100,
+        origin: { x: 30, y: 30 },
+        width: 100,
+        height: 100,
         elevation: 0,
-        ctx
+        ctx,
+        canvas
       })
     ]
-    this.linePlace = 1
   }
 
-  update = () => {
-    if (this.linePlace < this.canvas.height) {
-      this.linePlace += Math.pow(1.25, this.linePlace - 10)
-    } else {
-      this.linePlace = 1
-    }
+  update = position => {
+    this.perspectiveCenter = position
   }
 
   render = () => {
@@ -35,15 +33,14 @@ export class Board {
     this.ctx.beginPath()
     this.ctx.moveTo(0, height / 2)
     this.ctx.lineTo(width, height / 2)
-
-    //
-    this.ctx.moveTo(0, this.linePlace + height / 2)
-    this.ctx.lineTo(width, this.linePlace + height / 2)
-
-    //
     this.ctx.closePath()
     this.ctx.strokeStyle = 'white'
     this.ctx.lineWidth = 1
+    this.ctx.stroke()
+
+    this.ctx.beginPath()
+    this.ctx.arc(this.perspectiveCenter.x, this.perspectiveCenter.y, 5, 0, 360)
+    this.ctx.closePath()
     this.ctx.stroke()
   }
 }

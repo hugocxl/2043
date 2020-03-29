@@ -10,6 +10,7 @@ export class Ship {
   }
 
   update = position => {
+    this.perspectiveCenter = position
     this.position = {
       ...position,
       y: this.canvas.height
