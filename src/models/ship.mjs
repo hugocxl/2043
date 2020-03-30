@@ -9,13 +9,13 @@ export class Ship {
     this.position = { x: 0, y: 0 }
   }
 
-  update = position => {
-    this.perspectiveCenter = position
-    this.position = {
-      ...position,
-      y: this.canvas.height
-    }
-  }
+  // update = position => {
+  //   this.perspectiveCenter = position
+  //   this.position = {
+  //     ...position,
+  //     y: this.canvas.height
+  //   }
+  // }
 
   render = () => {
     const { height, width } = this.canvas
