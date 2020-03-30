@@ -1,7 +1,7 @@
 'use strict'
 
 import { config } from './config/index.mjs'
-import { Board, Ship, Obstacle } from './models/index.mjs'
+import { Board, Ship, Obstacle, Cloud } from './models/index.mjs'
 
 export class Game {
   constructor ({ ctx, canvas }) {
@@ -13,6 +13,7 @@ export class Game {
     this.board = new Board({ canvas, ctx })
     this.ship = new Ship({ canvas, ctx })
     this.obstacles = []
+    this.clouds = []
     this.pressedKey = null
   }
 
@@ -34,11 +35,12 @@ export class Game {
   setWindowIntervals = () => {
     setInterval(this.checkPressedKey, 10)
     setInterval(() => {
-      const dx = Math.random() * 1000000 * (Math.round(Math.random()) * 2 - 1)
+      const dx = Math.random() * 500000 * (Math.round(Math.random()) * 2 - 1)
       const h = Math.random() * 5000
       const l = Math.random() * 5000
 
-      this.obstacles = [...this.obstacles,
+      this.obstacles = [
+        ...this.obstacles,
         new Obstacle({
           origin: {
             x: 0,
@@ -46,16 +48,37 @@ export class Game {
           },
           d: {
             x: dx,
-            y: 50000
+            y: 10000
           },
-          width: 100,
-          height: 50000,
+          width: 200,
+          height: Math.random() * 10000,
           length: 100,
           ctx: this.ctx,
           canvas: this.canvas
         })
       ]
-    }, 100)
+    }, 10)
+
+    setInterval(() => {
+      const dx = Math.random() * 10000 * (Math.round(Math.random()) * 2 - 1)
+      const h = Math.random() * 5000
+      const l = Math.random() * 5000
+
+      this.clouds = [
+        ...this.clouds,
+        new Cloud({
+          d: {
+            x: dx,
+            y: 1000
+          },
+          width: 500,
+          height: 40,
+          length: 25,
+          ctx: this.ctx,
+          canvas: this.canvas
+        })
+      ]
+    }, 500)
   }
 
   checkPressedKey = () => {
@@ -75,13 +98,21 @@ export class Game {
   move = displacement => {
     this.board.move(displacement)
     this.obstacles.forEach(obs => obs.move(displacement))
+    this.clouds.forEach(cloud => cloud.move(displacement))
     // this.ship.move(this.displacement)
   }
 
   update = () => {
+    const obstacles = []
+    const clouds = []
     this.board.update()
 
-    const obstacles = []
+    this.clouds.forEach(cloud => {
+      if (cloud.d.y + cloud.length > 0) {
+        cloud.update()
+        clouds.push(cloud)
+      }
+    })
 
     this.obstacles.forEach(obs => {
       if (obs.d.y + obs.length > 0) {
@@ -91,6 +122,7 @@ export class Game {
     })
 
     this.obstacles = obstacles
+    this.clouds = clouds
   }
 
   clearCanvas = () => {
@@ -102,6 +134,7 @@ export class Game {
   render = () => {
     this.board.render()
     this.ship.render()
+    this.clouds.forEach(cloud => cloud.render())
     for (let i = this.obstacles.length; i > 0; i--) {
       this.obstacles[i - 1].render()
     }

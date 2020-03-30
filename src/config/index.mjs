@@ -1,6 +1,6 @@
 'use strict'
 
 export const config = {
-  gameUpdateInterval: 50,
+  gameUpdateInterval: 20,
   viewPointHeight: 50,
 }

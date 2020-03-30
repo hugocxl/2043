@@ -3,9 +3,8 @@
 import { config } from '../config/index.mjs'
 import { utils } from '../utils/index.mjs'
 
-export class Obstacle {
-  constructor ({ origin, length, width, ctx, canvas, d, height }) {
-    this.origin = origin
+export class Cloud {
+  constructor ({ length, width, ctx, canvas, d, height }) {
     this.length = length
     this.width = width
     this.height = height
@@ -27,17 +26,17 @@ export class Obstacle {
     const { origin, d, width, length, canvas } = this
 
     return {
-      v1: { x: origin.x + d.x, y: origin.y + d.y + canvas.height },
-      v2: { x: origin.x + d.x + width, y: origin.y + d.y + canvas.height },
-      v3: { x: origin.x + d.x + width, y: origin.y + d.y + canvas.height + length },
-      v4: { x: origin.x + d.x, y: origin.y + d.y + canvas.height + length },
+      v1: { x: d.x, y: -d.y },
+      v2: { x: d.x + width, y: -d.y },
+      v3: { x: d.x + width, y: -d.y - length },
+      v4: { x: d.x, y: -d.y - length },
     }
   }
 
   getProyectionPoints = () => {
     return {
-      p1: { x: this.origin.x + this.d.x, y: this.canvas.height },
-      p2: { x: this.origin.x + +this.d.x + this.width, y: this.canvas.height },
+      p1: { x: this.d.x, y: 0 },
+      p2: { x: this.d.x + this.width, y: 0 },
     }
   }
 
@@ -48,7 +47,7 @@ export class Obstacle {
 
     const { x, y } = utils.getIntersectionPointsBetween2Lines(pA1, pA2, pB1, pB2)
 
-    if (intersection && y > this.canvas.height) {
+    if (intersection && (y > this.canvas.height || y < 0)) {
       this.lockedPoints[intersection] = { x, y }
     }
 
@@ -60,17 +59,11 @@ export class Obstacle {
     const { f1, f2, o } = this.getVanishingPoints()
     const { p1, p2 } = this.getProyectionPoints()
 
-    const h1 = { x: p1.x, y: p1.y - this.height }
-    const h2 = { x: p2.x, y: p2.y - this.height }
+    const h1 = { x: p1.x, y: p1.y + this.height }
+    const h2 = { x: p2.x, y: p2.y + this.height }
 
-    const a = this.getIntersectionPoints(null, v1, v3, { x: 0, y: this.canvas.height }, {
-      x: 1000,
-      y: this.canvas.height
-    })
-    const b = this.getIntersectionPoints(null, v2, v4, { x: 0, y: this.canvas.height }, {
-      x: 1000,
-      y: this.canvas.height
-    })
+    const a = this.getIntersectionPoints(null, v1, v3, { x: 0, y: 0 }, { x: 1000, y: 0 })
+    const b = this.getIntersectionPoints(null, v2, v4, { x: 0, y: 0 }, { x: 1000, y: 0 })
 
     const i1 = this.getIntersectionPoints('i1', a, f2, p1, o)
     const i2 = this.getIntersectionPoints('i2', b, f1, p2, o)
@@ -96,14 +89,14 @@ export class Obstacle {
   update = () => {
     this.d = {
       ...this.d,
-      y: this.d.y - 10
+      y: this.d.y - 1
     }
   }
 
   move = displacement => {
     this.d = {
       ...this.d,
-      x: this.d.x - displacement
+      x: this.d.x - (displacement / 20)
     }
   }
 
@@ -118,13 +111,13 @@ export class Obstacle {
     this.ctx.lineTo(i5.x, i5.y)
     this.ctx.lineTo(i1.x, i1.y)
     this.ctx.closePath()
-    this.ctx.fillStyle = 'rgb(50,50,50)'
+    this.ctx.fillStyle = 'rgb(200,200,200)'
     this.ctx.fill()
     this.ctx.strokeStyle = 'white'
     this.ctx.lineWidth = 3
     // this.ctx.stroke()
-
-    if (i5.y > this.canvas.height / 2) {
+    //
+    if (i5.y < this.canvas.height / 2) {
       this.ctx.beginPath()
       this.ctx.moveTo(i5.x, i5.y)
       this.ctx.lineTo(i6.x, i6.y)
@@ -132,13 +125,13 @@ export class Obstacle {
       this.ctx.lineTo(i8.x, i8.y)
       this.ctx.lineTo(i5.x, i5.y)
       this.ctx.closePath()
-      this.ctx.fillStyle = 'rgb(150,150,150)'
+      this.ctx.fillStyle = 'rgb(255,255,255)'
       this.ctx.fill()
       this.ctx.strokeStyle = 'white'
       this.ctx.lineWidth = 3
       // this.ctx.stroke()
     }
-
+    //
     if (i1.x > this.canvas.width / 2) {
       this.ctx.beginPath()
       this.ctx.moveTo(i1.x, i1.y)
@@ -168,36 +161,6 @@ export class Obstacle {
       this.ctx.lineWidth = 3
       // this.ctx.stroke()
     }
-
-    // this.ctx.beginPath()
-    // this.ctx.moveTo(i1.x, i1.y)
-    // this.ctx.lineTo(i2.x, i2.y)
-    // this.ctx.lineTo(i3.x, i3.y)
-    // this.ctx.lineTo(i4.x, i4.y)
-    // this.ctx.lineTo(i1.x, i1.y)
-    //
-    // this.ctx.moveTo(i5.x, i5.y)
-    // this.ctx.lineTo(i6.x, i6.y)
-    // this.ctx.lineTo(i7.x, i7.y)
-    // this.ctx.lineTo(i8.x, i8.y)
-    // this.ctx.lineTo(i5.x, i5.y)
-    //
-    // this.ctx.moveTo(i1.x, i1.y)
-    // this.ctx.lineTo(i5.x, i5.y)
-    //
-    // this.ctx.moveTo(i2.x, i2.y)
-    // this.ctx.lineTo(i6.x, i6.y)
-    //
-    // this.ctx.moveTo(i3.x, i3.y)
-    // this.ctx.lineTo(i7.x, i7.y)
-    //
-    // this.ctx.moveTo(i4.x, i4.y)
-    // this.ctx.lineTo(i8.x, i8.y)
-    //
-    // this.ctx.closePath()
-    // this.ctx.strokeStyle = 'white'
-    // this.ctx.lineWidth = 3
-    // // this.ctx.stroke()
   }
 
 }
