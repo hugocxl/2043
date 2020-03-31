@@ -48,7 +48,7 @@ export class Game {
           },
           d: {
             x: dx,
-            y: 10000
+            y: 100000
           },
           width: 200,
           height: Math.random() * 10000,
@@ -60,7 +60,7 @@ export class Game {
     }, 10)
 
     setInterval(() => {
-      const dx = Math.random() * 10000 * (Math.round(Math.random()) * 2 - 1)
+      const dx = Math.random() * 100000 * (Math.round(Math.random()) * 2 - 1)
       const h = Math.random() * 5000
       const l = Math.random() * 5000
 
@@ -73,24 +73,24 @@ export class Game {
           },
           width: 500,
           height: 40,
-          length: 25,
+          length: 5,
           ctx: this.ctx,
           canvas: this.canvas
         })
       ]
-    }, 500)
+    }, 2500)
   }
 
   checkPressedKey = () => {
     switch (this.pressedKey) {
       case 'ArrowLeft': {
-        this.displacement -= 250
-        this.move(-250)
+        this.displacement -= 100
+        this.move(-100)
       }
         break
       case 'ArrowRight':
-        this.displacement += 250
-        this.move(250)
+        this.displacement += 100
+        this.move(100)
         break
     }
   }
@@ -134,7 +134,11 @@ export class Game {
   render = () => {
     this.board.render()
     this.ship.render()
-    this.clouds.forEach(cloud => cloud.render())
+
+    for (let i = this.clouds.length; i > 0; i--) {
+      this.clouds[i - 1].render()
+    }
+
     for (let i = this.obstacles.length; i > 0; i--) {
       this.obstacles[i - 1].render()
     }

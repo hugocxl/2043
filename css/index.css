@@ -33,7 +33,7 @@ body {
 
 
 #board {
-    cursor: none;
+    cursor: auto;
 }
 
 #modal-container {

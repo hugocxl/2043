@@ -89,7 +89,7 @@ export class Cloud {
   update = () => {
     this.d = {
       ...this.d,
-      y: this.d.y - 1
+      y: this.d.y - 0.1
     }
   }
 
