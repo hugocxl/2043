@@ -2,5 +2,5 @@
 
 export const config = {
   gameUpdateInterval: 1000 / 60,
-  viewPointHeight: 50,
+  viewPointHeight: 1000,
 }

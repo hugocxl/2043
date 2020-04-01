@@ -16,9 +16,9 @@ export class Cloud {
 
   getVanishingPoints = () => {
     return {
-      o: { x: this.canvas.width / 2, y: this.canvas.height / 2 },
-      f1: { x: this.canvas.width / 2 - config.viewPointHeight, y: this.canvas.height / 2 },
-      f2: { x: this.canvas.width / 2 + config.viewPointHeight, y: this.canvas.height / 2 }
+      o: { x: this.canvas.width / 2, y: this.canvas.height / 2 - 200 },
+      f1: { x: this.canvas.width / 2 - config.viewPointHeight, y: this.canvas.height / 2 - 200 },
+      f2: { x: this.canvas.width / 2 + config.viewPointHeight, y: this.canvas.height / 2 - 200 }
     }
   }
 
@@ -59,8 +59,8 @@ export class Cloud {
     const { f1, f2, o } = this.getVanishingPoints()
     const { p1, p2 } = this.getProyectionPoints()
 
-    const h1 = { x: p1.x, y: p1.y + this.height }
-    const h2 = { x: p2.x, y: p2.y + this.height }
+    const h1 = { x: p1.x, y: p1.y + this.height - 200 }
+    const h2 = { x: p2.x, y: p2.y + this.height - 200 }
 
     const a = this.getIntersectionPoints(null, v1, v3, { x: 0, y: 0 }, { x: 1000, y: 0 })
     const b = this.getIntersectionPoints(null, v2, v4, { x: 0, y: 0 }, { x: 1000, y: 0 })
@@ -89,7 +89,7 @@ export class Cloud {
   update = () => {
     this.d = {
       ...this.d,
-      y: this.d.y - 0.1
+      y: this.d.y - 25
     }
   }
 

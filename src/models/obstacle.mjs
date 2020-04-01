@@ -96,7 +96,7 @@ export class Obstacle {
   update = () => {
     this.d = {
       ...this.d,
-      y: this.d.y - 10
+      y: this.d.y - 200
     }
   }
 

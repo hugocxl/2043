@@ -50,9 +50,9 @@ export class Game {
             x: dx,
             y: 100000
           },
-          width: 200,
-          height: Math.random() * 10000,
-          length: 100,
+          width: 500,
+          height: 500,
+          length: 500,
           ctx: this.ctx,
           canvas: this.canvas
         })
@@ -69,16 +69,16 @@ export class Game {
         new Cloud({
           d: {
             x: dx,
-            y: 1000
+            y: 10000
           },
-          width: 500,
-          height: 40,
-          length: 5,
+          width: 200,
+          height: 20,
+          length: 200,
           ctx: this.ctx,
           canvas: this.canvas
         })
       ]
-    }, 2500)
+    }, 20)
   }
 
   checkPressedKey = () => {
