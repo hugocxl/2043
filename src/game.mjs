@@ -48,22 +48,24 @@ export class Game {
           new Obstacle({
             ctx: this.ctx,
             canvas: this.canvas,
-            ...utils.generateRandomObject()
+            ...utils.generateObstacle()
           })
         ]
         break
       }
 
       case CLOUD : {
-        this.clouds = [
-          ...this.clouds,
-          new Cloud({
-            ctx: this.ctx,
-            canvas: this.canvas,
-            ...utils.generateRandomObject()
-          })
-        ]
-        break
+        if (!this.clouds.length < 20) {
+          this.clouds = [
+            ...this.clouds,
+            new Cloud({
+              ctx: this.ctx,
+              canvas: this.canvas,
+              ...utils.generateCloud()
+            })
+          ]
+          break
+        }
       }
 
       default: {
@@ -137,6 +139,9 @@ export class Game {
 
   render = () => {
     this.board.render()
+
+    this.obstacles.map(el => el.renderLines())
+
     this.ship.render()
 
     for (let i = this.clouds.length; i > 0; i--) {

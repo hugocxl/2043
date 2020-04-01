@@ -4,14 +4,14 @@ import { SCALE_UNIT } from '../constants/index.mjs'
 
 export const config = {
   gameUpdateInterval: 1000 / 60,
-  viewPointHeight: 1 * SCALE_UNIT,
+  viewPointHeight: 50 * SCALE_UNIT,
   addItemTimeout: {
-    obstacle: 20,
-    cloud: 20,
+    obstacle: 50,
+    cloud: 2500,
   },
   speed: {
-    obstacle: 10000,
-    cloud: 10000,
-    ship: 50
+    obstacle: 1500,
+    cloud: 3000,
+    ship: 20
   }
 }

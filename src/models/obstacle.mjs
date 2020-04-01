@@ -81,6 +81,7 @@ export class Obstacle {
     const i8 = this.getIntersectionPoints('i8', i4, { x: i4.x, y: 0 }, o, h1)
 
     return {
+      o,
       i1,
       i2,
       i3,
@@ -106,8 +107,18 @@ export class Obstacle {
     }
   }
 
+  renderLines = () => {
+    const { o, i1, i2, i3, i4, i5, i8, i6, i7 } = this.getRenderPoints()
+    this.ctx.beginPath()
+    this.ctx.moveTo(o.x, o.y)
+    this.ctx.lineTo(i3.x, i3.y)
+    this.ctx.strokeStyle = 'white'
+    this.ctx.lineWidth = 1
+    this.ctx.stroke()
+  }
+
   render = () => {
-    const { i1, i2, i3, i4, i5, i8, i6, i7 } = this.getRenderPoints()
+    const { o, i1, i2, i3, i4, i5, i8, i6, i7 } = this.getRenderPoints()
 
     this.ctx.beginPath()
     this.ctx.moveTo(i1.x, i1.y)
@@ -167,36 +178,6 @@ export class Obstacle {
       this.ctx.lineWidth = 3
       // this.ctx.stroke()
     }
-
-    // this.ctx.beginPath()
-    // this.ctx.moveTo(i1.x, i1.y)
-    // this.ctx.lineTo(i2.x, i2.y)
-    // this.ctx.lineTo(i3.x, i3.y)
-    // this.ctx.lineTo(i4.x, i4.y)
-    // this.ctx.lineTo(i1.x, i1.y)
-    //
-    // this.ctx.moveTo(i5.x, i5.y)
-    // this.ctx.lineTo(i6.x, i6.y)
-    // this.ctx.lineTo(i7.x, i7.y)
-    // this.ctx.lineTo(i8.x, i8.y)
-    // this.ctx.lineTo(i5.x, i5.y)
-    //
-    // this.ctx.moveTo(i1.x, i1.y)
-    // this.ctx.lineTo(i5.x, i5.y)
-    //
-    // this.ctx.moveTo(i2.x, i2.y)
-    // this.ctx.lineTo(i6.x, i6.y)
-    //
-    // this.ctx.moveTo(i3.x, i3.y)
-    // this.ctx.lineTo(i7.x, i7.y)
-    //
-    // this.ctx.moveTo(i4.x, i4.y)
-    // this.ctx.lineTo(i8.x, i8.y)
-    //
-    // this.ctx.closePath()
-    // this.ctx.strokeStyle = 'white'
-    // this.ctx.lineWidth = 3
-    // // this.ctx.stroke()
   }
 
 }
