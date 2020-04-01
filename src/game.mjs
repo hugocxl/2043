@@ -1,7 +1,9 @@
 'use strict'
 
 import { config } from './config/index.mjs'
+import { utils } from './utils/index.mjs'
 import { Board, Ship, Obstacle, Cloud } from './models/index.mjs'
+import { OBSTACLE, CLOUD, SCALE_UNIT } from './constants/index.mjs'
 
 export class Game {
   constructor ({ ctx, canvas }) {
@@ -34,72 +36,72 @@ export class Game {
 
   setWindowIntervals = () => {
     setInterval(this.checkPressedKey, 10)
-    setInterval(() => {
-      const dx = Math.random() * 500000 * (Math.round(Math.random()) * 2 - 1)
-      const h = Math.random() * 5000
-      const l = Math.random() * 5000
+    setInterval(() => this.addItem(OBSTACLE), config.addItemTimeout.obstacle)
+    setInterval(() => this.addItem(CLOUD), config.addItemTimeout.cloud)
+  }
 
-      this.obstacles = [
-        ...this.obstacles,
-        new Obstacle({
-          origin: {
-            x: 0,
-            y: 0
-          },
-          d: {
-            x: dx,
-            y: 100000
-          },
-          width: 500,
-          height: 500,
-          length: 500,
-          ctx: this.ctx,
-          canvas: this.canvas
-        })
-      ]
-    }, 10)
+  addItem = item => {
+    switch (item) {
+      case OBSTACLE: {
+        this.obstacles = [
+          ...this.obstacles,
+          new Obstacle({
+            ctx: this.ctx,
+            canvas: this.canvas,
+            ...utils.generateRandomObject()
+          })
+        ]
+        break
+      }
 
-    setInterval(() => {
-      const dx = Math.random() * 100000 * (Math.round(Math.random()) * 2 - 1)
-      const h = Math.random() * 5000
-      const l = Math.random() * 5000
+      case CLOUD : {
+        this.clouds = [
+          ...this.clouds,
+          new Cloud({
+            ctx: this.ctx,
+            canvas: this.canvas,
+            ...utils.generateRandomObject()
+          })
+        ]
+        break
+      }
 
-      this.clouds = [
-        ...this.clouds,
-        new Cloud({
-          d: {
-            x: dx,
-            y: 10000
-          },
-          width: 200,
-          height: 20,
-          length: 200,
-          ctx: this.ctx,
-          canvas: this.canvas
-        })
-      ]
-    }, 20)
+      default: {
+        throw new Error('ITEM TYPE NOT SPECIFIED')
+      }
+    }
   }
 
   checkPressedKey = () => {
     switch (this.pressedKey) {
       case 'ArrowLeft': {
-        this.displacement -= 100
-        this.move(-100)
+        this.displacement -= config.speed.ship
+        this.move(-config.speed.ship)
       }
         break
       case 'ArrowRight':
-        this.displacement += 100
-        this.move(100)
+        this.displacement += config.speed.ship
+        this.move(config.speed.ship)
         break
     }
   }
 
   move = displacement => {
     this.board.move(displacement)
-    this.obstacles.forEach(obs => obs.move(displacement))
-    this.clouds.forEach(cloud => cloud.move(displacement))
-    // this.ship.move(this.displacement)
+
+    const length = this.obstacles.length > this.clouds.length
+      ? this.obstacles.length
+      : this.clouds.length
+
+    for (let i = 0; i < length; i++) {
+      if (this.obstacles[i]) {
+        this.obstacles[i].move(displacement)
+      }
+
+      if (this.clouds[i]) {
+        this.clouds[i].move(displacement)
+      }
+    }
   }
 
   update = () => {
@@ -107,19 +109,21 @@ export class Game {
     const clouds = []
     this.board.update()
 
-    this.clouds.forEach(cloud => {
-      if (cloud.d.y + cloud.length > 0) {
-        cloud.update()
-        clouds.push(cloud)
-      }
-    })
+    const length = this.obstacles.length > this.clouds.length
+      ? this.obstacles.length
+      : this.clouds.length
 
-    this.obstacles.forEach(obs => {
-      if (obs.d.y + obs.length > 0) {
-        obs.update()
-        obstacles.push(obs)
+    for (let i = 0; i < length; i++) {
+      if (this.obstacles[i] && this.obstacles[i].d.y + this.obstacles[i].length > 0) {
+        this.obstacles[i].update()
+        obstacles.push(this.obstacles[i])
       }
-    })
+
+      if (this.clouds[i] && this.clouds[i].d.y + this.clouds[i].length > 0) {
+        this.clouds[i].update()
+        clouds.push(this.clouds[i])
+      }
+    }
 
     this.obstacles = obstacles
     this.clouds = clouds

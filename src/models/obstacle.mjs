@@ -4,8 +4,7 @@ import { config } from '../config/index.mjs'
 import { utils } from '../utils/index.mjs'
 
 export class Obstacle {
-  constructor ({ origin, length, width, ctx, canvas, d, height }) {
-    this.origin = origin
+  constructor ({ length, width, ctx, canvas, d, height }) {
     this.length = length
     this.width = width
     this.height = height
@@ -24,20 +23,20 @@ export class Obstacle {
   }
 
   getVertex = () => {
-    const { origin, d, width, length, canvas } = this
+    const { d, width, length, canvas } = this
 
     return {
-      v1: { x: origin.x + d.x, y: origin.y + d.y + canvas.height },
-      v2: { x: origin.x + d.x + width, y: origin.y + d.y + canvas.height },
-      v3: { x: origin.x + d.x + width, y: origin.y + d.y + canvas.height + length },
-      v4: { x: origin.x + d.x, y: origin.y + d.y + canvas.height + length },
+      v1: { x: d.x, y: d.y + canvas.height },
+      v2: { x: d.x + width, y: d.y + canvas.height },
+      v3: { x: d.x + width, y: d.y + canvas.height + length },
+      v4: { x: d.x, y: d.y + canvas.height + length },
     }
   }
 
   getProyectionPoints = () => {
     return {
-      p1: { x: this.origin.x + this.d.x, y: this.canvas.height },
-      p2: { x: this.origin.x + +this.d.x + this.width, y: this.canvas.height },
+      p1: { x: this.d.x, y: this.canvas.height },
+      p2: { x: this.d.x + this.width, y: this.canvas.height },
     }
   }
 
@@ -96,7 +95,7 @@ export class Obstacle {
   update = () => {
     this.d = {
       ...this.d,
-      y: this.d.y - 200
+      y: this.d.y - config.speed.obstacle
     }
   }
 
