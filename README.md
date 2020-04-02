@@ -1,1 +1,2 @@
-# ion
+# 2049
+Interactive canvas game
