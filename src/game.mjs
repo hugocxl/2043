@@ -140,7 +140,12 @@ export class Game {
   render = () => {
     this.board.render()
 
-    this.obstacles.map(el => el.renderLines())
+    // Conditionate this
+    this.obstacles.map(el => {
+      if (el.d.x > -10000 && el.d.x < 10000 && el.d.y < 500000) {
+        el.renderLines()
+      }
+    })
 
     this.ship.render()
 
