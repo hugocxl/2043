@@ -10,11 +10,35 @@ export class Game {
     this.ctx = ctx
     this.canvas = canvas
     this.gameInterval = null
+    this.levelIntervals = null
     this.score = 0
     this.displacement = 0
     this.board = new Board({ canvas, ctx })
     this.ship = new Ship({ canvas, ctx })
-    this.obstacles = []
+    this.obstacles = [
+      new Obstacle({
+        ctx: this.ctx,
+        canvas: this.canvas,
+        height: 1000000 * SCALE_UNIT,
+        length: 1000 * SCALE_UNIT,
+        width: 10000000 * SCALE_UNIT,
+        d: {
+          x: -10000000 * SCALE_UNIT,
+          y: 10000 * SCALE_UNIT
+        },
+      }),
+      new Obstacle({
+        ctx: this.ctx,
+        canvas: this.canvas,
+        height: 1000000 * SCALE_UNIT,
+        length: 1000 * SCALE_UNIT,
+        width: 10000000 * SCALE_UNIT,
+        d: {
+          x: 10000000 * SCALE_UNIT,
+          y: 10000 * SCALE_UNIT
+        }
+      })
+    ]
     this.clouds = []
     this.pressedKey = null
   }
@@ -27,6 +51,12 @@ export class Game {
       if (e.key === 'ArrowRight') {
         this.pressedKey = 'ArrowRight'
       }
+      if (e.key === 'ArrowUp') {
+        this.pressedKey = 'ArrowUp'
+      }
+      if (e.key === 'ArrowDown') {
+        this.pressedKey = 'ArrowDown'
+      }
     }, true)
 
     window.addEventListener('keyup', e => {
@@ -38,6 +68,46 @@ export class Game {
     setInterval(this.checkPressedKey, 10)
     setInterval(() => this.addItem(OBSTACLE), config.addItemTimeout.obstacle)
     setInterval(() => this.addItem(CLOUD), config.addItemTimeout.cloud)
+
+  }
+
+  endLevel = () => {
+    setInterval(() => {
+      clearInterval(this.levelIntervals)
+
+      // setTimeout(() => {
+      //   this.obstacles = [
+      //     ...this.obstacles,
+      //     new Obstacle({
+      //       ctx: this.ctx,
+      //       canvas: this.canvas,
+      //       height: 10000 * SCALE_UNIT,
+      //       length: 1000 * SCALE_UNIT,
+      //       width: 1000 * SCALE_UNIT,
+      //       d: {
+      //         x: -1000 * SCALE_UNIT,
+      //         y: 100000 * SCALE_UNIT
+      //       },
+      //     }),
+      //     new Obstacle({
+      //       ctx: this.ctx,
+      //       canvas: this.canvas,
+      //       height: 10000 * SCALE_UNIT,
+      //       length: 1000 * SCALE_UNIT,
+      //       width: 1000 * SCALE_UNIT,
+      //       d: {
+      //         x: 1000 * SCALE_UNIT,
+      //         y: 100000 * SCALE_UNIT
+      //       },
+      //     })
+      //   ]
+      // }, 60000)
+
+      setTimeout(() => {
+        this.levelIntervals = this.setWindowIntervals()
+      }, 20000)
+
+    }, 20000)
   }
 
   addItem = item => {
@@ -165,7 +235,8 @@ export class Game {
 
   start = () => {
     this.setWindowListeners()
-    this.setWindowIntervals()
+    this.levelIntervals = this.setWindowIntervals()
+    this.endLevel()
 
     this.gameInterval = setInterval(() => {
       this.clearCanvas()
