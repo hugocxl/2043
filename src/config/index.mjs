@@ -10,8 +10,8 @@ export const config = {
     cloud: 2500,
   },
   speed: {
-    obstacle: 2000,
-    cloud: 3000,
+    obstacle: 1000,
+    cloud: 2500,
     ship: 50
   }
 }

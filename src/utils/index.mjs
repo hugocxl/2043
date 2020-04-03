@@ -17,27 +17,27 @@ function getIntersectionPointsBetween2Lines (pA1, pA2, pB1, pB2) {
   }
 }
 
-function generateObstacle () {
-  const oX = Math.random() * 2500 * SCALE_UNIT * (Math.round(Math.random()) * 2 - 1)
-  const width = 10 * SCALE_UNIT * Math.random()
-  const height = 10 * SCALE_UNIT * Math.random()
-  const length = 10 * SCALE_UNIT * Math.random()
+function generateObstacle (displacement) {
+  const oX = displacement + Math.random() * 250 * SCALE_UNIT * (Math.round(Math.random()) * 2 - 1)
+  const width = 10 * SCALE_UNIT
+  const height = 20 * SCALE_UNIT * Math.random()
+  // const length = 100 * SCALE_UNIT * Math.random()
 
   return {
     d: {
       x: oX,
-      y: 10000 * SCALE_UNIT
+      y: 5000 * SCALE_UNIT
     },
     width,
     height,
-    length,
+    length: 10 * SCALE_UNIT,
   }
 }
 
 function generateCloud () {
   const oX = Math.random() * 5000 * SCALE_UNIT * (Math.round(Math.random()) * 2 - 1)
   const width = 2000 * SCALE_UNIT * Math.random()
-  const height = 20 * SCALE_UNIT * Math.random()
+  const height = 200 * SCALE_UNIT * Math.random()
   const length = 5000 * SCALE_UNIT * Math.random()
   const elevation = 5000 * SCALE_UNIT * Math.random()
 
@@ -53,33 +53,8 @@ function generateCloud () {
   }
 }
 
-function generateTiles (interval, windowSize) {
-  const width = interval
-  const length = interval
-
-  let oX = -SCALE_UNIT * 1000
-  const tiles = []
-
-  for (let i = 0; i < 100000; i++) {
-    tiles.push({
-      width,
-      length,
-      d: {
-        x: oX,
-        y: 500 * SCALE_UNIT
-      }
-    })
-
-    oX += interval
-  }
-
-  return tiles
-
-}
-
 export const utils = {
   getIntersectionPointsBetween2Lines,
   generateCloud,
   generateObstacle,
-  generateTiles
 }

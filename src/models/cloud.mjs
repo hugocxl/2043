@@ -119,6 +119,11 @@ export class Cloud {
 
   render = () => {
     const { i1, i2, i3, i4, i5, i6, i7, i8 } = this.getRenderPoints()
+    // const opacity = this.d.y > 1
+    //   ? (2 / this.d.y) * 1000000
+    //   : 1
+
+    const opacity = 1
 
     this.ctx.beginPath()
     this.ctx.moveTo(i1.x, i1.y)
@@ -127,7 +132,7 @@ export class Cloud {
     this.ctx.lineTo(i4.x, i4.y)
     this.ctx.lineTo(i1.x, i1.y)
     this.ctx.closePath()
-    this.ctx.fillStyle = 'rgb(160,160,160)'
+    this.ctx.fillStyle = `rgb(195,148,169,${opacity})`
     this.ctx.fill()
 
     this.ctx.beginPath()
@@ -137,7 +142,7 @@ export class Cloud {
     this.ctx.lineTo(i2.x, i2.y)
     this.ctx.lineTo(i1.x, i1.y)
     this.ctx.closePath()
-    this.ctx.fillStyle = 'rgb(200,200,200)'
+    this.ctx.fillStyle = `rgb(225,195,195,${opacity})`
     this.ctx.fill()
 
     if (i1.x > this.canvas.width / 2) {
@@ -148,7 +153,7 @@ export class Cloud {
       this.ctx.lineTo(i5.x, i5.y)
       this.ctx.lineTo(i1.x, i1.y)
       this.ctx.closePath()
-      this.ctx.fillStyle = 'white'
+      this.ctx.fillStyle = `rgb(255,255,255,${opacity})`
       this.ctx.fill()
     }
 
@@ -160,7 +165,7 @@ export class Cloud {
       this.ctx.lineTo(i6.x, i6.y)
       this.ctx.lineTo(i2.x, i2.y)
       this.ctx.closePath()
-      this.ctx.fillStyle = 'white'
+      this.ctx.fillStyle = `rgb(255,255,255,${opacity})`
       this.ctx.fill()
     }
   }

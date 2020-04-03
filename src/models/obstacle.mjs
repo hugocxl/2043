@@ -107,18 +107,29 @@ export class Obstacle {
     }
   }
 
-  renderLines = () => {
-    const { o, i1, i2, i3, i4, i5, i8, i6, i7 } = this.getRenderPoints()
-    this.ctx.beginPath()
-    this.ctx.moveTo(o.x, o.y)
-    this.ctx.lineTo(i3.x, i3.y)
-    this.ctx.strokeStyle = 'white'
-    this.ctx.lineWidth = 1
-    this.ctx.stroke()
-  }
-
   render = () => {
     const { o, i1, i2, i3, i4, i5, i8, i6, i7 } = this.getRenderPoints()
+
+    const opacity = this.d.y > 1 && (1 / this.d.y) * 10000 < 0.2
+      ? (1 / this.d.y) * 100000
+      : 1
+
+    const opacityLine = this.d.y > 1
+      ? (1 / this.d.y) * 100000
+      : 1
+
+    this.ctx.shadowBlur = 0
+    this.ctx.shadowOffsetY = 0
+
+    if (this.d.y > 1) {
+      this.ctx.beginPath()
+      this.ctx.moveTo(0, i1.y)
+      this.ctx.lineTo(this.canvas.width, i1.y)
+      this.ctx.closePath()
+      this.ctx.strokeStyle = `rgba(255,255,255,${opacityLine - 0.25})`
+      this.ctx.lineWidth = 1
+      this.ctx.stroke()
+    }
 
     this.ctx.beginPath()
     this.ctx.moveTo(i1.x, i1.y)
@@ -128,11 +139,11 @@ export class Obstacle {
     this.ctx.lineTo(i5.x, i5.y)
     this.ctx.lineTo(i1.x, i1.y)
     this.ctx.closePath()
-    this.ctx.fillStyle = 'rgb(50,50,50)'
+    this.ctx.fillStyle = `rgb(50,50,50,${opacity})`
     this.ctx.fill()
-    this.ctx.strokeStyle = 'white'
-    this.ctx.lineWidth = 3
-    // this.ctx.stroke()
+    this.ctx.strokeStyle = `rgb(250,250,250,${opacityLine})`
+    this.ctx.lineWidth = 1
+    this.ctx.stroke()
 
     if (i5.y > this.canvas.height / 2) {
       this.ctx.beginPath()
@@ -142,11 +153,11 @@ export class Obstacle {
       this.ctx.lineTo(i8.x, i8.y)
       this.ctx.lineTo(i5.x, i5.y)
       this.ctx.closePath()
-      this.ctx.fillStyle = 'rgb(150,150,150)'
+      this.ctx.fillStyle = `rgb(150,150,150,${opacity})`
       this.ctx.fill()
-      this.ctx.strokeStyle = 'white'
-      this.ctx.lineWidth = 3
-      // this.ctx.stroke()
+      this.ctx.strokeStyle = `rgb(250,250,250,${opacityLine})`
+      this.ctx.lineWidth = 1
+      this.ctx.stroke()
     }
 
     if (i1.x > this.canvas.width / 2) {
@@ -157,11 +168,11 @@ export class Obstacle {
       this.ctx.lineTo(i5.x, i5.y)
       this.ctx.lineTo(i1.x, i1.y)
       this.ctx.closePath()
-      this.ctx.fillStyle = 'rgb(100,100,100)'
+      this.ctx.fillStyle = `rgb(100,100,100,${opacity})`
       this.ctx.fill()
-      this.ctx.strokeStyle = 'white'
-      this.ctx.lineWidth = 3
-      // this.ctx.stroke()
+      this.ctx.strokeStyle = `rgb(250,250,250,${opacityLine})`
+      this.ctx.lineWidth = 1
+      this.ctx.stroke()
     }
 
     if (i2.x < this.canvas.width / 2) {
@@ -172,11 +183,11 @@ export class Obstacle {
       this.ctx.lineTo(i6.x, i6.y)
       this.ctx.lineTo(i2.x, i2.y)
       this.ctx.closePath()
-      this.ctx.fillStyle = 'rgb(100,100,100)'
+      this.ctx.fillStyle = `rgb(100,100,100,${opacity})`
       this.ctx.fill()
-      this.ctx.strokeStyle = 'white'
-      this.ctx.lineWidth = 3
-      // this.ctx.stroke()
+      this.ctx.strokeStyle = `rgb(250,250,250,${opacityLine})`
+      this.ctx.lineWidth = 1
+      this.ctx.stroke()
     }
   }
 

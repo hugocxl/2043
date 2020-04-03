@@ -18,40 +18,52 @@ export class Board {
     const { height, width } = this.canvas
 
     this.ctx.beginPath()
-    const grd = this.ctx.createLinearGradient(0, this.canvas.height / 2, 0, this.canvas.height)
-    grd.addColorStop(0, 'rgb(120,120,120)')
-    grd.addColorStop(0.3, 'rgb(200,200,200)')
-    grd.addColorStop(1, 'white')
-    this.ctx.fillStyle = grd
-    this.ctx.fillRect(0, this.canvas.height / 2, this.canvas.width, this.canvas.height / 2)
-    this.ctx.closePath()
-
-    this.ctx.beginPath()
     const grd2 = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height / 2)
-    grd2.addColorStop(0, 'rgba(49,27,27,1)')
-    grd2.addColorStop(0.2, 'rgba(76,40,34,1)')
-    grd2.addColorStop(0.4, 'rgba(128,60,44,1)')
-    grd2.addColorStop(0.75, 'rgba(235,115,68,1)')
-    grd2.addColorStop(1, 'rgba(245,195,85,1)')
+    grd2.addColorStop(0, 'rgb(232,183,137)')
+    grd2.addColorStop(0.2, 'rgb(230,215,169)')
+    grd2.addColorStop(0.4, 'rgb(225,192,192)')
+    grd2.addColorStop(0.8, 'rgb(195,148,169)')
+    grd2.addColorStop(1, 'rgb(191,117,116)')
+    // grd2.addColorStop(1, 'rgb(179,136,97)')
     this.ctx.fillStyle = grd2
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height / 2)
     this.ctx.closePath()
 
     this.ctx.beginPath()
-    this.ctx.moveTo(0, height / 2)
-    this.ctx.lineTo(width, height / 2)
+    this.ctx.arc(this.canvas.width / 2 + 150, this.canvas.height / 2 - 350, 200, 0, Math.PI * 2, true)
     this.ctx.closePath()
-    this.ctx.strokeStyle = 'white'
-    this.ctx.lineWidth = 1
-    this.ctx.stroke()
+    this.ctx.fillStyle = 'rgba(255,233,201,0.05)'
+    this.ctx.fill()
+    this.ctx.beginPath()
+    this.ctx.arc(this.canvas.width / 2 + 150, this.canvas.height / 2 - 350, 100, 0, Math.PI * 2, true)
+    this.ctx.closePath()
+    this.ctx.fillStyle = 'rgba(255,233,201,0.1)'
+    this.ctx.fill()
+    this.ctx.beginPath()
+    this.ctx.arc(this.canvas.width / 2 + 150, this.canvas.height / 2 - 350, 50, 0, Math.PI * 2, true)
+    this.ctx.closePath()
+    this.ctx.fillStyle = 'rgba(255,233,201,0.2)'
+    this.ctx.fill()
+    this.ctx.beginPath()
+    this.ctx.arc(this.canvas.width / 2 + 150, this.canvas.height / 2 - 350, 25, 0, Math.PI * 2, true)
+    this.ctx.closePath()
+    this.ctx.fillStyle = 'rgb(255,233,201)'
+    this.ctx.fill()
 
     this.ctx.beginPath()
-    this.ctx.arc(this.canvas.width / 2 + 300, this.canvas.height / 2 - 200, 75, 0, Math.PI * 2, true)
+    this.ctx.arc(this.canvas.width / 2 + 220, this.canvas.height / 2 - 150, 50, 0, Math.PI * 2, true)
     this.ctx.closePath()
-    // this.ctx.shadowBlur = 0
-    // this.ctx.shadowOffsetY = 1
-    // this.ctx.shadowColor = 'rgb(255,0,8)'
-    this.ctx.fillStyle = 'red'
+    this.ctx.fillStyle = 'rgba(255,0,8,0.6)'
     this.ctx.fill()
+
+    this.ctx.beginPath()
+    const grd = this.ctx.createLinearGradient(0, this.canvas.height / 2, 0, this.canvas.height)
+    grd.addColorStop(0, 'rgb(139,123,104)')
+    grd.addColorStop(0.3, 'rgb(199,180,153)')
+    grd.addColorStop(1, 'rgb(255,233,201)')
+    this.ctx.fillStyle = grd
+    this.ctx.fillRect(0, this.canvas.height / 2, this.canvas.width, this.canvas.height / 2)
+    this.ctx.closePath()
+
   }
 }

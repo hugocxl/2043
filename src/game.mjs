@@ -15,30 +15,7 @@ export class Game {
     this.displacement = 0
     this.board = new Board({ canvas, ctx })
     this.ship = new Ship({ canvas, ctx })
-    this.obstacles = [
-      new Obstacle({
-        ctx: this.ctx,
-        canvas: this.canvas,
-        height: 1000000 * SCALE_UNIT,
-        length: 1000 * SCALE_UNIT,
-        width: 10000000 * SCALE_UNIT,
-        d: {
-          x: -10000000 * SCALE_UNIT,
-          y: 10000 * SCALE_UNIT
-        },
-      }),
-      new Obstacle({
-        ctx: this.ctx,
-        canvas: this.canvas,
-        height: 1000000 * SCALE_UNIT,
-        length: 1000 * SCALE_UNIT,
-        width: 10000000 * SCALE_UNIT,
-        d: {
-          x: 10000000 * SCALE_UNIT,
-          y: 10000 * SCALE_UNIT
-        }
-      })
-    ]
+    this.obstacles = []
     this.clouds = []
     this.pressedKey = null
   }
@@ -68,46 +45,6 @@ export class Game {
     setInterval(this.checkPressedKey, 10)
     setInterval(() => this.addItem(OBSTACLE), config.addItemTimeout.obstacle)
     setInterval(() => this.addItem(CLOUD), config.addItemTimeout.cloud)
-
-  }
-
-  endLevel = () => {
-    setInterval(() => {
-      clearInterval(this.levelIntervals)
-
-      // setTimeout(() => {
-      //   this.obstacles = [
-      //     ...this.obstacles,
-      //     new Obstacle({
-      //       ctx: this.ctx,
-      //       canvas: this.canvas,
-      //       height: 10000 * SCALE_UNIT,
-      //       length: 1000 * SCALE_UNIT,
-      //       width: 1000 * SCALE_UNIT,
-      //       d: {
-      //         x: -1000 * SCALE_UNIT,
-      //         y: 100000 * SCALE_UNIT
-      //       },
-      //     }),
-      //     new Obstacle({
-      //       ctx: this.ctx,
-      //       canvas: this.canvas,
-      //       height: 10000 * SCALE_UNIT,
-      //       length: 1000 * SCALE_UNIT,
-      //       width: 1000 * SCALE_UNIT,
-      //       d: {
-      //         x: 1000 * SCALE_UNIT,
-      //         y: 100000 * SCALE_UNIT
-      //       },
-      //     })
-      //   ]
-      // }, 60000)
-
-      setTimeout(() => {
-        this.levelIntervals = this.setWindowIntervals()
-      }, 20000)
-
-    }, 20000)
   }
 
   addItem = item => {
@@ -118,14 +55,14 @@ export class Game {
           new Obstacle({
             ctx: this.ctx,
             canvas: this.canvas,
-            ...utils.generateObstacle()
+            ...utils.generateObstacle(this.displacement)
           })
         ]
         break
       }
 
       case CLOUD : {
-        if (!this.clouds.length < 20) {
+        if (this.clouds.length < 20) {
           this.clouds = [
             ...this.clouds,
             new Cloud({
@@ -210,13 +147,6 @@ export class Game {
   render = () => {
     this.board.render()
 
-    // Conditionate this
-    this.obstacles.map(el => {
-      if (el.d.x > -10000 && el.d.x < 10000 && el.d.y < 500000) {
-        el.renderLines()
-      }
-    })
-
     this.ship.render()
 
     for (let i = this.clouds.length; i > 0; i--) {
@@ -236,7 +166,6 @@ export class Game {
   start = () => {
     this.setWindowListeners()
     this.levelIntervals = this.setWindowIntervals()
-    this.endLevel()
 
     this.gameInterval = setInterval(() => {
       this.clearCanvas()
