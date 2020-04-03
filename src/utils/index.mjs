@@ -18,9 +18,10 @@ function getIntersectionPointsBetween2Lines (pA1, pA2, pB1, pB2) {
 }
 
 function generateObstacle (displacement) {
-  const oX = displacement + Math.random() * 250 * SCALE_UNIT * (Math.round(Math.random()) * 2 - 1)
-  const width = 10 * SCALE_UNIT
-  const height = 20 * SCALE_UNIT * Math.random()
+  const minWidth = 25 * SCALE_UNIT
+  const oX = Math.random() * 1000 * SCALE_UNIT * (Math.round(Math.random()) * 2 - 1)
+  const width = 50 * SCALE_UNIT
+  const height = 200 * SCALE_UNIT * Math.random()
   // const length = 100 * SCALE_UNIT * Math.random()
 
   return {
