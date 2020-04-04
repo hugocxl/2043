@@ -13,13 +13,14 @@ export class Obstacle {
     this.canvas = canvas
     this.d = d
     this.lockedPoints = {}
+    this.displacement = 0
   }
 
   getVanishingPoints = () => {
     return {
-      o: { x: this.canvas.width / 2, y: this.canvas.height / 2 },
-      f1: { x: this.canvas.width / 2 - config.viewPointHeight, y: this.canvas.height / 2 },
-      f2: { x: this.canvas.width / 2 + config.viewPointHeight, y: this.canvas.height / 2 }
+      o: { x: this.canvas.width / 2 + this.displacement, y: this.canvas.height / 2 },
+      f1: { x: this.canvas.width / 2 + this.displacement - config.viewPointHeight, y: this.canvas.height / 2 },
+      f2: { x: this.canvas.width / 2 + this.displacement + config.viewPointHeight, y: this.canvas.height / 2 }
     }
   }
 
@@ -112,7 +113,8 @@ export class Obstacle {
     }
   }
 
-  update = () => {
+  update = displacement => {
+    this.displacement = displacement
     this.d = {
       ...this.d,
       y: this.d.y - config.speed.obstacle

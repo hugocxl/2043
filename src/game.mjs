@@ -5,6 +5,11 @@ import { utils } from './utils/index.mjs'
 import { Board, Ship, Obstacle, Cloud } from './models/index.mjs'
 import { OBSTACLE, CLOUD, SCALE_UNIT } from './constants/index.mjs'
 
+// Game controls the following params
+// world instance
+// ship instance
+// score
+
 export class Game {
   constructor ({ ctx, canvas }) {
     this.ctx = ctx
@@ -124,7 +129,8 @@ export class Game {
 
     for (let i = 0; i < length; i++) {
       if (this.obstacles[i] && this.obstacles[i].d.y + this.obstacles[i].length > 0) {
-        this.obstacles[i].update()
+        // this.obstacles[i].update(this.displacement / 50)
+        this.obstacles[i].update(0)
         obstacles.push(this.obstacles[i])
       }
 
