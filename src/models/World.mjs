@@ -33,6 +33,9 @@ export class World {
       x: canvas.width / 2,
       y: canvas.height / 2
     }
+
+    this.addCloudInterval = null
+    this.addObstacleInterval = null
   }
 
   setListeners = () => {
@@ -53,13 +56,13 @@ export class World {
   setIntervals = () => {
     setInterval(this.onKeyPress, 10)
 
-    setInterval(() => {
+    this.addCloudInterval = setInterval(() => {
       if (this.obstacles.length < this.config.obstacle.limit) {
         this.addItem(OBSTACLE)
       }
     }, this.config.obstacle.interval)
 
-    setInterval(() => {
+    this.addObstacleInterval = setInterval(() => {
       if (this.clouds.length < this.config.cloud.limit) {
         this.addItem(CLOUD)
       }
@@ -71,7 +74,7 @@ export class World {
       case KEYS.LEFT: {
         this.position = {
           ...this.position,
-          x: this.position.x - 100
+          x: this.position.x - 10
         }
         this.perspectiveOrigin = {
           ...this.perspectiveOrigin,
@@ -83,7 +86,7 @@ export class World {
       case KEYS.RIGHT: {
         this.position = {
           ...this.position,
-          x: this.position.x + 100
+          x: this.position.x + 10
         }
         this.perspectiveOrigin = {
           ...this.perspectiveOrigin,
@@ -117,8 +120,7 @@ export class World {
           new Obstacle({
             ctx: this.ctx,
             canvas: this.canvas,
-            ...this.config.obstacle,
-            ...utils.generateObstacle()
+            ...utils.generateObstacle(this.config.obstacle)
           }),
           ...this.obstacles
         ]
@@ -130,7 +132,7 @@ export class World {
           new Cloud({
             ctx: this.ctx,
             canvas: this.canvas,
-            ...utils.generateCloud()
+            ...utils.generateCloud(this.config.cloud)
           }),
           ...this.clouds
         ]
@@ -141,6 +143,10 @@ export class World {
         throw new Error('ITEM TYPE NOT SPECIFIED')
       }
     }
+  }
+
+  onWorldChange = config => {
+    this.config = config
   }
 
   update = () => {
@@ -168,6 +174,11 @@ export class World {
     this.clouds = clouds
   }
 
+  stop = () => {
+    clearInterval(this.addObstacleInterval)
+    clearInterval(this.addCloudInterval)
+  }
+
   render = () => {
     this.clouds.forEach(cloud => cloud.render())
     this.obstacles.forEach(obstacle => obstacle.render())
@@ -175,6 +186,6 @@ export class World {
 
   start = () => {
     this.setListeners()
-    this.intervals = this.setIntervals()
+    this.setIntervals()
   }
 }

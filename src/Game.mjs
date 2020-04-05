@@ -26,6 +26,7 @@ export class Game {
 
   setIntervals = () => {
     setInterval(this.setTime, 1000)
+    setInterval(this.setLevel, config.levelDuration)
   }
 
   setTime = () => {
@@ -58,10 +59,20 @@ export class Game {
     clearInterval(this.processIntervals)
   }
 
+  setLevel = () => {
+    this.world.stop()
+
+    setTimeout(() => {
+      this.world.onWorldChange(utils.generateWorld())
+
+      this.world.start()
+    }, 10000)
+  }
+
   initModels = () => {
     this.world = new World({
       ...this,
-      config: worldConfigScheme,
+      config: utils.generateWorld(),
     })
 
     this.world.start()

@@ -224,10 +224,9 @@ export class Obstacle {
   render = () => {
     const points = this.get3Dpoints()
 
-    this.renderFaces(points)
     this.renderBaseLine(points)
     this.renderShadow(points)
-
+    this.renderFaces(points)
   }
 
 }

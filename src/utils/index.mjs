@@ -1,6 +1,7 @@
 'use strict'
 
 import { SCALE_UNIT } from '../constants/index.mjs'
+import { config } from '../config/index.mjs'
 
 function getIntersectionPointsBetween2Lines (pA1, pA2, pB1, pB2) {
   if ((pA1.x === pA2.x && pA1.y === pA2.y) || (pB1.x === pB2.x && pB1.y === pB2.y)) {
@@ -17,20 +18,22 @@ function getIntersectionPointsBetween2Lines (pA1, pA2, pB1, pB2) {
   }
 }
 
-function generateObstacle (displacement) {
-  const oX = Math.random() * 500 * SCALE_UNIT * (Math.round(Math.random()) * 2 - 1)
-  const width = 5 * SCALE_UNIT
-  const height = 50 * SCALE_UNIT * Math.random()
-  const length = 1 * SCALE_UNIT
+function generateObstacle ({ u, color }) {
+  const width = u * SCALE_UNIT
+  const height = u * 50 * SCALE_UNIT * Math.random()
+  const length = u * SCALE_UNIT * Math.random()
+  const oX = Math.random() * u * 100 * SCALE_UNIT * (Math.round(Math.random()) * 2 - 1)
 
   return {
-    position: {
-      x: oX,
-      y: 50 * SCALE_UNIT
-    },
     width,
     height,
-    length
+    length,
+    color: [color, color, color],
+    speed: u * 50,
+    position: {
+      x: oX,
+      y: 250 * u * SCALE_UNIT
+    },
   }
 }
 
@@ -46,6 +49,8 @@ function generateCloud () {
       x: oX,
       y: 100000 * SCALE_UNIT
     },
+    limit: config.itemsLimit,
+    interval: 1000,
     width,
     height,
     length,
@@ -53,8 +58,24 @@ function generateCloud () {
   }
 }
 
+function generateWorld () {
+  const u = Math.random() * 50
+  const color = Math.floor(Math.random() * 255) + 1
+
+  return {
+    obstacle: {
+      limit: config.itemsLimit,
+      interval: 50,
+      color,
+      u,
+    },
+    cloud: generateCloud()
+  }
+}
+
 export const utils = {
   getIntersectionPointsBetween2Lines,
   generateCloud,
   generateObstacle,
+  generateWorld,
 }
