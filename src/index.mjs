@@ -3,20 +3,25 @@
 import { Game } from './Game.mjs'
 
 window.onload = function () {
-  const canvas = document.getElementById('x2043__board')
+  const canvas = document.getElementById('x2043__board-main')
   const ctx = canvas.getContext('2d')
 
   function setCanvasDimensions () {
-    canvas.width = window.innerWidth
-    canvas.height = window.innerHeight
+    const { innerWidth, innerHeight } = window
+
+    canvas.width = innerWidth
+    canvas.height = innerHeight
   }
 
-  function moveCanvas () {
-    canvas.style.transform = `translate(${Math.round(Math.random()) * 2 - 1}px, ${Math.round(Math.random()) * 2 - 1}px)`
+  function setCanvasTranslation () {
+    const x = Math.round(Math.random()) * 2 - 1
+    const y = Math.round(Math.random()) * 2 - 1
+
+    canvas.style.transform = `translate(${x}px, ${y}px)`
   }
 
   function setIntervals () {
-    // window.setInterval(moveCanvas, 50)
+    // window.setInterval(setCanvasTranslation, 50)
   }
 
   function setListeners () {

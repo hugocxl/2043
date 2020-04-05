@@ -5,8 +5,8 @@ import { SCALE_UNIT } from '../constants/index.mjs'
 export const config = {
   gameFPS: 1000 / 60,
   viewPointHeight: 5 * SCALE_UNIT,
-  levelDuration: 10000,
-  itemsLimit: 250,
+  levelDuration: 30000,
+  itemsLimit: 100,
   addItemTimeout: {
     obstacle: 50,
     cloud: 2500,
@@ -16,7 +16,6 @@ export const config = {
     cloud: 2500,
     ship: 100
   }
-
 }
 
 export const worldConfigScheme = {

@@ -19,14 +19,16 @@ export class Game {
     this.renderInterval = null
     this.processIntervals = null
     this.timer = document.getElementById('x2043__board-score-timer')
+    this.timerInterval = null
+    this.worldInterval = null
     this.duration = 0
     this.ship = null
     this.world = null
   }
 
   setIntervals = () => {
-    setInterval(this.setTime, 1000)
-    setInterval(this.setLevel, config.levelDuration)
+    this.timerInterval = setInterval(this.setTime, 1000)
+    this.worldInterval = setInterval(this.setWorld, config.levelDuration)
   }
 
   setTime = () => {
@@ -38,6 +40,25 @@ export class Game {
 
     this.duration += 1
     this.timer.innerText = minutes + ':' + seconds
+  }
+
+  setWorld = () => {
+    this.world.stop()
+
+    setTimeout(() => {
+      this.world.onWorldChange(utils.generateWorld())
+
+      this.world.start()
+    }, 10000)
+  }
+
+  setModels = () => {
+    this.world = new World({
+      ...this,
+      config: utils.generateWorld(),
+    })
+
+    this.world.start()
   }
 
   update = () => {
@@ -55,40 +76,22 @@ export class Game {
   }
 
   stop = () => {
-    clearInterval(this.renderInterval)
-    clearInterval(this.processIntervals)
-  }
-
-  setLevel = () => {
-    this.world.stop()
-
-    setTimeout(() => {
-      this.world.onWorldChange(utils.generateWorld())
-
-      this.world.start()
-    }, 10000)
-  }
-
-  initModels = () => {
-    this.world = new World({
-      ...this,
-      config: utils.generateWorld(),
-    })
-
-    this.world.start()
+    cancelAnimationFrame(this.renderInterval)
+    clearInterval(this.timerInterval)
+    clearInterval(this.worldInterval)
   }
 
   start = () => {
-    this.initModels()
-    this.processIntervals = this.setIntervals()
+    this.setModels()
+    this.setIntervals()
 
-    const test = () => {
+    const mainRenderProcess = () => {
       this.clearCanvas()
       this.update()
       this.render()
-      window.requestAnimationFrame(test)
+      requestAnimationFrame(mainRenderProcess)
     }
 
-    this.renderInterval = requestAnimationFrame(test)
+    this.renderInterval = requestAnimationFrame(mainRenderProcess)
   }
 }
