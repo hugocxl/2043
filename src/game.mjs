@@ -1,147 +1,102 @@
 'use strict'
 
-import { config } from './config/index.mjs'
+import { config, worldConfigScheme } from './config/index.mjs'
 import { utils } from './utils/index.mjs'
-import { Board, Ship, Obstacle, Cloud } from './models/index.mjs'
-import { OBSTACLE, CLOUD, SCALE_UNIT } from './constants/index.mjs'
-
-// Game controls the following params
-// world instance
-// ship instance
-// score
+import { OBSTACLE, CLOUD, SCALE_UNIT, KEYS } from './constants/index.mjs'
+import { Ship, World } from './models/index.mjs'
 
 export class Game {
   constructor ({ ctx, canvas }) {
     this.ctx = ctx
     this.canvas = canvas
-    this.gameInterval = null
-    this.levelIntervals = null
+    this.renderInterval = null
+    this.processIntervals = null
     this.score = 0
-    this.displacement = 0
-    this.board = new Board({ canvas, ctx })
-    this.ship = new Ship({ canvas, ctx })
-    this.obstacles = []
-    this.clouds = []
+    this.timer = document.getElementById('x2043__board-score-timer')
+    this.duration = 0
     this.pressedKey = null
+    this.ship = null
+    this.world = null
+    this.position = {
+      x: 0,
+      y: 0
+    }
+    this.perspectiveOrigin = {
+      x: canvas.width / 2,
+      y: canvas.height / 2
+    }
   }
 
-  setWindowListeners = () => {
-    window.addEventListener('keydown', e => {
-      if (e.key === 'ArrowLeft') {
-        this.pressedKey = 'ArrowLeft'
-      }
-      if (e.key === 'ArrowRight') {
-        this.pressedKey = 'ArrowRight'
-      }
-      if (e.key === 'ArrowUp') {
-        this.pressedKey = 'ArrowUp'
-      }
-      if (e.key === 'ArrowDown') {
-        this.pressedKey = 'ArrowDown'
-      }
+  setListeners = () => {
+    addEventListener('keydown', ({ key }) => {
+      this.pressedKey = key
     }, true)
 
-    window.addEventListener('keyup', e => {
+    addEventListener('keyup', () => {
       this.pressedKey = null
     }, true)
   }
 
-  setWindowIntervals = () => {
-    setInterval(this.checkPressedKey, 10)
-    setInterval(() => this.addItem(OBSTACLE), config.addItemTimeout.obstacle)
-    setInterval(() => this.addItem(CLOUD), config.addItemTimeout.cloud)
+  setIntervals = () => {
+    setInterval(this.onKeyPress, 10)
+    setInterval(this.setTime, 1000)
   }
 
-  addItem = item => {
-    switch (item) {
-      case OBSTACLE: {
-        this.obstacles = [
-          ...this.obstacles,
-          new Obstacle({
-            ctx: this.ctx,
-            canvas: this.canvas,
-            ...utils.generateObstacle(this.displacement)
-          })
-        ]
-        break
-      }
+  setTime = () => {
+    let minutes = parseInt(this.duration / 60, 10)
+    let seconds = parseInt(this.duration % 60, 10)
 
-      case CLOUD : {
-        if (this.clouds.length < 20) {
-          this.clouds = [
-            ...this.clouds,
-            new Cloud({
-              ctx: this.ctx,
-              canvas: this.canvas,
-              ...utils.generateCloud()
-            })
-          ]
-          break
-        }
-      }
+    minutes = minutes < 10 ? '0' + minutes : minutes
+    seconds = seconds < 10 ? '0' + seconds : seconds
 
-      default: {
-        throw new Error('ITEM TYPE NOT SPECIFIED')
-      }
-    }
+    this.duration += 1
+    this.timer.innerText = minutes + ':' + seconds
   }
 
-  checkPressedKey = () => {
+  onKeyPress = () => {
     switch (this.pressedKey) {
-      case 'ArrowLeft': {
-        this.displacement -= config.speed.ship
-        this.move(-config.speed.ship)
-      }
+      case KEYS.LEFT: {
+        this.position = {
+          ...this.position,
+          x: this.position.x - config.speed.ship
+        }
         break
-      case 'ArrowRight':
-        this.displacement += config.speed.ship
-        this.move(config.speed.ship)
-        break
-    }
-  }
-
-  move = displacement => {
-    this.board.move(displacement)
-
-    const length = this.obstacles.length > this.clouds.length
-      ? this.obstacles.length
-      : this.clouds.length
-
-    for (let i = 0; i < length; i++) {
-      if (this.obstacles[i]) {
-        this.obstacles[i].move(displacement)
       }
 
-      if (this.clouds[i]) {
-        this.clouds[i].move(displacement)
+      case KEYS.RIGHT: {
+        this.position = {
+          ...this.position,
+          x: this.position.x + config.speed.ship
+        }
+        break
+      }
+
+      case KEYS.UP: {
+        this.position = {
+          ...this.position,
+          y: this.position.y + 1
+        }
+        break
+      }
+
+      case KEYS.DOWN: {
+        this.position = {
+          ...this.position,
+          y: this.position.y - 1
+        }
+        break
       }
     }
   }
 
   update = () => {
-    const obstacles = []
-    const clouds = []
-    this.board.update()
-
-    const length = this.obstacles.length > this.clouds.length
-      ? this.obstacles.length
-      : this.clouds.length
-
-    for (let i = 0; i < length; i++) {
-      if (this.obstacles[i] && this.obstacles[i].d.y + this.obstacles[i].length > 0) {
-        // this.obstacles[i].update(this.displacement / 50)
-        this.obstacles[i].update(0)
-        obstacles.push(this.obstacles[i])
-      }
-
-      if (this.clouds[i] && this.clouds[i].d.y + this.clouds[i].length > 0) {
-        this.clouds[i].update()
-        clouds.push(this.clouds[i])
-      }
+    const updatedPosition = {
+      ...this.position,
+      y: this.position.y + 1
     }
 
-    this.obstacles = obstacles
-    this.clouds = clouds
+    // this.ship.render()
+    // this.world.render()
   }
 
   clearCanvas = () => {
@@ -151,32 +106,33 @@ export class Game {
   }
 
   render = () => {
-    this.board.render()
-
-    this.ship.render()
-
-    for (let i = this.clouds.length; i > 0; i--) {
-      this.clouds[i - 1].render()
-    }
-
-    for (let i = this.obstacles.length; i > 0; i--) {
-      this.obstacles[i - 1].render()
-    }
+    // this.ship.render()
+    // this.world.render()
   }
 
   stop = () => {
-    window.removeEventListener('keydown', this.checkPressedKey)
-    clearInterval(this.gameInterval)
+    removeEventListener('keydown', this.onKeyPress)
+    clearInterval(this.renderInterval)
+    clearInterval(this.processIntervals)
+  }
+
+  initModels = () => {
+    // this.ship = new Ship(this)
+    this.world = new World({
+      ...this,
+      ...worldConfigScheme
+    })
   }
 
   start = () => {
-    this.setWindowListeners()
-    this.levelIntervals = this.setWindowIntervals()
+    this.setListeners()
+    this.processIntervals = this.setIntervals()
+    this.initModels()
 
-    this.gameInterval = setInterval(() => {
+    this.renderInterval = setInterval(() => {
       this.clearCanvas()
       this.update()
       this.render()
-    }, config.gameUpdateInterval)
+    }, config.gameFPS)
   }
 }

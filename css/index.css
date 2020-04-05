@@ -31,11 +31,16 @@ body {
 }
 
 
-#board {
+#x2043__board {
     cursor: auto;
     transition: all 0.05s ease-in-out;
 }
 
-
-
+#x2043__board-score {
+    color: black;
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: 2;
+}
 

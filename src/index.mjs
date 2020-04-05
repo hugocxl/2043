@@ -3,7 +3,7 @@
 import { Game } from './game.mjs'
 
 window.onload = function () {
-  const canvas = document.getElementById('board')
+  const canvas = document.getElementById('x2043__board')
   const ctx = canvas.getContext('2d')
 
   function setCanvasDimensions () {
