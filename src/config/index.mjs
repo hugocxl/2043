@@ -4,7 +4,7 @@ import { SCALE_UNIT } from '../constants/index.mjs'
 
 export const config = {
   gameFPS: 1000 / 60,
-  viewPointHeight: 50 * SCALE_UNIT,
+  viewPointHeight: 1 * SCALE_UNIT,
   addItemTimeout: {
     obstacle: 50,
     cloud: 2500,
@@ -18,15 +18,17 @@ export const config = {
 
 export const worldConfigScheme = {
   obstacle: {
-    width: 50 * SCALE_UNIT,
-    height: 200 * SCALE_UNIT * Math.random(),
-    length: 10 * SCALE_UNIT,
+    width: 5 * SCALE_UNIT,
+    height: 20 * SCALE_UNIT * Math.random(),
+    length: 1 * SCALE_UNIT,
     color: ['50', '50', '50'],
-    d: {
-      x: Math.random() * 1000 * SCALE_UNIT * (Math.round(Math.random()) * 2 - 1),
-      y: 5000 * SCALE_UNIT
+    speed: 10,
+    position: {
+      x: Math.random() * 10 * SCALE_UNIT * (Math.round(Math.random()) * 2 - 1),
+      y: 500 * SCALE_UNIT
     },
-    frecuency: 50
+    interval: 50,
+    limit: 500
   },
   cloud: {
     width: 2000 * SCALE_UNIT * Math.random(),
@@ -36,9 +38,10 @@ export const worldConfigScheme = {
     color: ['50', '50', '50'],
     d: {
       x: Math.random() * 5000 * SCALE_UNIT * (Math.round(Math.random()) * 2 - 1),
-      y: 100000 * SCALE_UNIT
+      y: 10000 * SCALE_UNIT
     },
-    frecuency: 2500
+    interval: 2500,
+    limit: 30
   },
   sun: {
     color: ['50', '50', '50'],

@@ -1,6 +1,6 @@
 'use strict'
 
-import { Game } from './game.mjs'
+import { Game } from './Game.mjs'
 
 window.onload = function () {
   const canvas = document.getElementById('x2043__board')
@@ -16,7 +16,7 @@ window.onload = function () {
   }
 
   function setIntervals () {
-    window.setInterval(moveCanvas, 50)
+    // window.setInterval(moveCanvas, 50)
   }
 
   function setListeners () {

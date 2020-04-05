@@ -34,6 +34,7 @@ body {
 #x2043__board {
     cursor: auto;
     transition: all 0.05s ease-in-out;
+    background: red;
 }
 
 #x2043__board-score {

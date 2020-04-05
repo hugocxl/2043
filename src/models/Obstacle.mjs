@@ -5,40 +5,47 @@ import { utils } from '../utils/index.mjs'
 import { SCALE_UNIT } from '../constants/index.mjs'
 
 export class Obstacle {
-  constructor ({ length, width, ctx, canvas, d, height }) {
+  constructor ({ length, width, ctx, canvas, position, height, perspectiveOrigin, speed }) {
     this.length = length
     this.width = width
     this.height = height
     this.ctx = ctx
     this.canvas = canvas
-    this.d = d
+    this.position = position
     this.lockedPoints = {}
-    this.displacement = 0
+    this.perspectiveOrigin = perspectiveOrigin
+    this.speed = speed
   }
 
   getVanishingPoints = () => {
     return {
-      o: { x: this.canvas.width / 2 + this.displacement, y: this.canvas.height / 2 },
-      f1: { x: this.canvas.width / 2 + this.displacement - config.viewPointHeight, y: this.canvas.height / 2 },
-      f2: { x: this.canvas.width / 2 + this.displacement + config.viewPointHeight, y: this.canvas.height / 2 }
+      o: this.perspectiveOrigin,
+      f1: {
+        ...this.perspectiveOrigin,
+        x: this.perspectiveOrigin.x - config.viewPointHeight
+      },
+      f2: {
+        ...this.perspectiveOrigin,
+        x: this.perspectiveOrigin.x + config.viewPointHeight
+      },
     }
   }
 
   getVertex = () => {
-    const { d, width, length, canvas } = this
+    const { position, width, length, canvas } = this
 
     return {
-      v1: { x: d.x, y: d.y + canvas.height },
-      v2: { x: d.x + width, y: d.y + canvas.height },
-      v3: { x: d.x + width, y: d.y + canvas.height + length },
-      v4: { x: d.x, y: d.y + canvas.height + length },
+      v1: { x: position.x, y: position.y + canvas.height },
+      v2: { x: position.x + width, y: position.y + canvas.height },
+      v3: { x: position.x + width, y: position.y + canvas.height + length },
+      v4: { x: position.x, y: position.y + canvas.height + length },
     }
   }
 
   getProyectionPoints = () => {
     return {
-      p1: { x: this.d.x, y: this.canvas.height },
-      p2: { x: this.d.x + this.width, y: this.canvas.height },
+      p1: { x: this.position.x, y: this.canvas.height },
+      p2: { x: this.position.x + this.width, y: this.canvas.height },
     }
   }
 
@@ -56,7 +63,7 @@ export class Obstacle {
     return { x, y }
   }
 
-  getRenderPoints = () => {
+  get3Dpoints = () => {
     const { v1, v2, v3, v4 } = this.getVertex()
     const { f1, f2, o } = this.getVanishingPoints()
     const { p1, p2 } = this.getProyectionPoints()
@@ -64,14 +71,20 @@ export class Obstacle {
     const h1 = { x: p1.x, y: p1.y - this.height }
     const h2 = { x: p2.x, y: p2.y - this.height }
 
-    const a = this.getIntersectionPoints(null, v1, v3, { x: 0, y: this.canvas.height }, {
-      x: 1000,
-      y: this.canvas.height
-    })
-    const b = this.getIntersectionPoints(null, v2, v4, { x: 0, y: this.canvas.height }, {
-      x: 1000,
-      y: this.canvas.height
-    })
+    const a = this.getIntersectionPoints(
+      null,
+      v1,
+      v3,
+      { x: 0, y: this.canvas.height },
+      { x: 1000, y: this.canvas.height }
+    )
+    const b = this.getIntersectionPoints(
+      null,
+      v2,
+      v4,
+      { x: 0, y: this.canvas.height },
+      { x: 1000, y: this.canvas.height }
+    )
 
     const i1 = this.getIntersectionPoints('i1', a, f2, p1, o)
     const i2 = this.getIntersectionPoints('i2', b, f1, p2, o)
@@ -113,23 +126,16 @@ export class Obstacle {
     }
   }
 
-  update = displacement => {
-    this.displacement = displacement
-    this.d = {
-      ...this.d,
-      y: this.d.y - config.speed.obstacle
-    }
-  }
-
-  move = displacement => {
-    this.d = {
-      ...this.d,
-      x: this.d.x - displacement
+  update = ({ perspectiveOrigin, position }) => {
+    this.perspectiveOrigin = perspectiveOrigin
+    this.position = {
+      x: this.position.x - position.x,
+      y: this.position.y - this.speed - position.y
     }
   }
 
   renderBaseLine = ({ o, i1, i2, i3, i4, i5, i8, i6, i7, s1, s2, s3 }) => {
-    if (this.d.y > 1) {
+    if (this.position.y > 1) {
       this.ctx.beginPath()
       this.ctx.moveTo(0, i1.y)
       this.ctx.lineTo(this.canvas.width, i1.y)
@@ -154,28 +160,7 @@ export class Obstacle {
     this.ctx.fill()
   }
 
-  render = () => {
-    const { o, i1, i2, i3, i4, i5, i8, i6, i7, s1, s2, s3 } = this.getRenderPoints()
-
-    const opacity = this.d.y > 1 && (1 / this.d.y) * 100000 < 0.3
-      ? (1 / this.d.y) * 100000
-      : 1
-
-    const opacityLine = this.d.y > 1
-      ? (1 / this.d.y) * 100000
-      : 1
-
-    this.ctx.shadowBlur = 0
-    this.ctx.shadowOffsetY = 0
-
-    if (this.d.y < 250 * SCALE_UNIT) {
-      this.renderBaseLine({ o, i1, i2, i3, i4, i5, i8, i6, i7, s1, s2, s3 })
-    }
-
-    if (this.d.y < 5000 * SCALE_UNIT) {
-      this.renderShadow({ o, i1, i2, i3, i4, i5, i8, i6, i7, s1, s2, s3 })
-    }
-
+  renderFaces = ({ o, i1, i2, i3, i4, i5, i8, i6, i7, s1, s2, s3 }) => {
     this.ctx.beginPath()
     this.ctx.moveTo(i1.x, i1.y)
     this.ctx.lineTo(i2.x, i2.y)
@@ -184,9 +169,9 @@ export class Obstacle {
     this.ctx.lineTo(i5.x, i5.y)
     this.ctx.lineTo(i1.x, i1.y)
     this.ctx.closePath()
-    this.ctx.fillStyle = `rgb(50,50,50,${opacity})`
+    this.ctx.fillStyle = `rgb(50,50,50,${1})`
     this.ctx.fill()
-    this.ctx.strokeStyle = `rgb(250,250,250,${opacityLine})`
+    this.ctx.strokeStyle = `rgb(250,250,250,${1})`
     this.ctx.lineWidth = 1
     this.ctx.stroke()
 
@@ -198,9 +183,9 @@ export class Obstacle {
       this.ctx.lineTo(i8.x, i8.y)
       this.ctx.lineTo(i5.x, i5.y)
       this.ctx.closePath()
-      this.ctx.fillStyle = `rgb(150,150,150,${opacity})`
+      this.ctx.fillStyle = `rgb(150,150,150,${1})`
       this.ctx.fill()
-      this.ctx.strokeStyle = `rgb(250,250,250,${opacityLine})`
+      this.ctx.strokeStyle = `rgb(250,250,250,${1})`
       this.ctx.lineWidth = 1
       this.ctx.stroke()
     }
@@ -213,9 +198,9 @@ export class Obstacle {
       this.ctx.lineTo(i5.x, i5.y)
       this.ctx.lineTo(i1.x, i1.y)
       this.ctx.closePath()
-      this.ctx.fillStyle = `rgb(100,100,100,${opacity})`
+      this.ctx.fillStyle = `rgb(100,100,100,${1})`
       this.ctx.fill()
-      this.ctx.strokeStyle = `rgb(250,250,250,${opacityLine})`
+      this.ctx.strokeStyle = `rgb(250,250,250,${1})`
       this.ctx.lineWidth = 1
       this.ctx.stroke()
     }
@@ -228,12 +213,21 @@ export class Obstacle {
       this.ctx.lineTo(i6.x, i6.y)
       this.ctx.lineTo(i2.x, i2.y)
       this.ctx.closePath()
-      this.ctx.fillStyle = `rgb(100,100,100,${opacity})`
+      this.ctx.fillStyle = `rgb(100,100,100,${1})`
       this.ctx.fill()
-      this.ctx.strokeStyle = `rgb(250,250,250,${opacityLine})`
+      this.ctx.strokeStyle = `rgb(250,250,250,${1})`
       this.ctx.lineWidth = 1
       this.ctx.stroke()
     }
+  }
+
+  render = () => {
+    const points = this.get3Dpoints()
+
+    this.renderFaces(points)
+    this.renderBaseLine(points)
+    this.renderShadow(points)
+
   }
 
 }
