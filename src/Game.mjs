@@ -49,7 +49,7 @@ export class Game {
       this.world.onWorldChange(utils.generateWorld())
 
       this.world.start()
-    }, 10000)
+    }, config.timeBetweenLevels)
   }
 
   setModels = () => {

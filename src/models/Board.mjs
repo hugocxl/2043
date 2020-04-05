@@ -30,33 +30,6 @@ export class Board {
     this.ctx.closePath()
 
     this.ctx.beginPath()
-    this.ctx.arc(this.canvas.width / 2 + 150, this.canvas.height / 2 - 350, 200, 0, Math.PI * 2, true)
-    this.ctx.closePath()
-    this.ctx.fillStyle = 'rgba(255,233,201,0.05)'
-    this.ctx.fill()
-    this.ctx.beginPath()
-    this.ctx.arc(this.canvas.width / 2 + 150, this.canvas.height / 2 - 350, 100, 0, Math.PI * 2, true)
-    this.ctx.closePath()
-    this.ctx.fillStyle = 'rgba(255,233,201,0.1)'
-    this.ctx.fill()
-    this.ctx.beginPath()
-    this.ctx.arc(this.canvas.width / 2 + 150, this.canvas.height / 2 - 350, 50, 0, Math.PI * 2, true)
-    this.ctx.closePath()
-    this.ctx.fillStyle = 'rgba(255,233,201,0.2)'
-    this.ctx.fill()
-    this.ctx.beginPath()
-    this.ctx.arc(this.canvas.width / 2 + 150, this.canvas.height / 2 - 350, 25, 0, Math.PI * 2, true)
-    this.ctx.closePath()
-    this.ctx.fillStyle = 'rgb(255,233,201)'
-    this.ctx.fill()
-
-    this.ctx.beginPath()
-    this.ctx.arc(this.canvas.width / 2 + 220, this.canvas.height / 2 - 150, 50, 0, Math.PI * 2, true)
-    this.ctx.closePath()
-    this.ctx.fillStyle = 'rgba(255,0,8,0.6)'
-    this.ctx.fill()
-
-    this.ctx.beginPath()
     const grd = this.ctx.createLinearGradient(0, this.canvas.height / 2, 0, this.canvas.height)
     grd.addColorStop(0, 'rgb(139,123,104)')
     grd.addColorStop(0.3, 'rgb(199,180,153)')

@@ -1,7 +1,7 @@
 'use strict'
 
 // Models
-import { Cloud, Obstacle } from './index.mjs'
+import { Cloud, Obstacle, Sun } from './index.mjs'
 
 // Constants
 import { CLOUD, OBSTACLE, KEYS } from '../constants/index.mjs'
@@ -26,14 +26,17 @@ export class World {
     this.obstacles = []
     this.clouds = []
     this.board = null
-    this.sun = null
+    this.sun = new Sun({
+      canvas,
+      ctx,
+      radius: 25
+    })
     this.pressedKey = null
     this.position = { x: 0, y: 0 }
     this.perspectiveOrigin = {
       x: canvas.width / 2,
       y: canvas.height / 2
     }
-
     this.addCloudInterval = null
     this.addObstacleInterval = null
   }
@@ -78,7 +81,7 @@ export class World {
         }
         this.perspectiveOrigin = {
           ...this.perspectiveOrigin,
-          x: this.perspectiveOrigin.x - 0.1
+          x: this.perspectiveOrigin.x - 0.25
         }
         break
       }
@@ -90,7 +93,7 @@ export class World {
         }
         this.perspectiveOrigin = {
           ...this.perspectiveOrigin,
-          x: this.perspectiveOrigin.x + 0.1
+          x: this.perspectiveOrigin.x + 0.25
         }
         break
       }
@@ -118,9 +121,10 @@ export class World {
       case OBSTACLE: {
         this.obstacles = [
           new Obstacle({
+            ...this,
             ctx: this.ctx,
             canvas: this.canvas,
-            ...utils.generateObstacle(this.config.obstacle)
+            ...utils.generateObstacle(this.config.obstacle),
           }),
           ...this.obstacles
         ]
@@ -130,9 +134,10 @@ export class World {
       case CLOUD : {
         this.clouds = [
           new Cloud({
+            ...this,
             ctx: this.ctx,
             canvas: this.canvas,
-            ...utils.generateCloud(this.config.cloud)
+            ...utils.generateCloud(this.config.cloud),
           }),
           ...this.clouds
         ]
@@ -150,7 +155,6 @@ export class World {
   }
 
   update = () => {
-    const { position, perspectiveOrigin } = this
     const obstacles = []
     const clouds = []
 
@@ -160,12 +164,12 @@ export class World {
 
     for (let i = 0; i < length; i++) {
       if (this.obstacles[i] && (this.obstacles[i].position.y > 0)) {
-        this.obstacles[i].update({ position, perspectiveOrigin })
+        this.obstacles[i].update(this)
         obstacles.push(this.obstacles[i])
       }
 
       if (this.clouds[i] && this.clouds[i].d.y + this.clouds[i].length > 0) {
-        this.clouds[i].update({ position, perspectiveOrigin })
+        this.clouds[i].update(this)
         clouds.push(this.clouds[i])
       }
     }
@@ -180,6 +184,7 @@ export class World {
   }
 
   render = () => {
+    this.sun.render()
     this.clouds.forEach(cloud => cloud.render())
     this.obstacles.forEach(obstacle => obstacle.render())
   }

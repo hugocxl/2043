@@ -6,7 +6,8 @@ export const config = {
   gameFPS: 1000 / 60,
   viewPointHeight: 5 * SCALE_UNIT,
   levelDuration: 30000,
-  itemsLimit: 100,
+  timeBetweenLevels: 5000,
+  itemsLimit: 500,
   addItemTimeout: {
     obstacle: 50,
     cloud: 2500,
@@ -24,7 +25,7 @@ export const worldConfigScheme = {
     height: 20 * SCALE_UNIT * Math.random(),
     length: 1 * SCALE_UNIT,
     color: ['50', '50', '50'],
-    speed: 10,
+    speed: 5,
     position: {
       x: Math.random() * 10 * SCALE_UNIT * (Math.round(Math.random()) * 2 - 1),
       y: 500 * SCALE_UNIT

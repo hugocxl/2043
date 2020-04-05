@@ -5,7 +5,7 @@ import { utils } from '../utils/index.mjs'
 import { SCALE_UNIT } from '../constants/index.mjs'
 
 export class Obstacle {
-  constructor ({ length, width, ctx, canvas, position, height, perspectiveOrigin, speed }) {
+  constructor ({ length, width, ctx, canvas, position, height, perspectiveOrigin, speed, color, sun }) {
     this.length = length
     this.width = width
     this.height = height
@@ -14,7 +14,13 @@ export class Obstacle {
     this.position = position
     this.lockedPoints = {}
     this.perspectiveOrigin = perspectiveOrigin
+    this.sunPosition = sun.position
     this.speed = speed
+    this.color = [
+      Math.floor(Math.random() * 200) + 1,
+      Math.floor(Math.random() * 200) + 1,
+      Math.floor(Math.random() * 200) + 1
+    ]
   }
 
   getVanishingPoints = () => {
@@ -67,6 +73,10 @@ export class Obstacle {
     const { v1, v2, v3, v4 } = this.getVertex()
     const { f1, f2, o } = this.getVanishingPoints()
     const { p1, p2 } = this.getProyectionPoints()
+    const sunProyection = {
+      ...this.sunPosition,
+      y: this.canvas.height / 2
+    }
 
     const h1 = { x: p1.x, y: p1.y - this.height }
     const h2 = { x: p2.x, y: p2.y - this.height }
@@ -95,20 +105,9 @@ export class Obstacle {
     const i7 = this.getIntersectionPoints('i7', i3, { x: i3.x, y: 0 }, o, h2)
     const i8 = this.getIntersectionPoints('i8', i4, { x: i4.x, y: 0 }, o, h1)
 
-    // TODO: SUN POSITIONING
-    const sun = {
-      x: this.canvas.width / 2 + 350,
-      y: this.canvas.height / 2 - 350
-    }
-
-    const sunProyection = {
-      ...sun,
-      y: this.canvas.height / 2
-    }
-
-    const s1 = this.getIntersectionPoints('s1', i2, sunProyection, i6, sun)
-    const s2 = this.getIntersectionPoints('s2', i1, sunProyection, i5, sun)
-    const s3 = this.getIntersectionPoints('s3', i4, sunProyection, i8, sun)
+    const s1 = this.getIntersectionPoints('s1', i2, sunProyection, i6, this.sunPosition)
+    const s2 = this.getIntersectionPoints('s2', i1, sunProyection, i5, this.sunPosition)
+    const s3 = this.getIntersectionPoints('s3', i4, sunProyection, i8, this.sunPosition)
 
     return {
       o,
@@ -126,7 +125,8 @@ export class Obstacle {
     }
   }
 
-  update = ({ perspectiveOrigin, position }) => {
+  update = ({ perspectiveOrigin, position, sun }) => {
+    this.sunPosition = sun.position
     this.perspectiveOrigin = perspectiveOrigin
     this.position = {
       x: this.position.x - position.x,
@@ -169,7 +169,7 @@ export class Obstacle {
     this.ctx.lineTo(i5.x, i5.y)
     this.ctx.lineTo(i1.x, i1.y)
     this.ctx.closePath()
-    this.ctx.fillStyle = `rgb(50,50,50,${1})`
+    this.ctx.fillStyle = `rgb(${this.color[0]},${this.color[1]},${this.color[2]},${1})`
     this.ctx.fill()
     this.ctx.strokeStyle = `rgb(250,250,250,${1})`
     this.ctx.lineWidth = 1
@@ -183,7 +183,7 @@ export class Obstacle {
       this.ctx.lineTo(i8.x, i8.y)
       this.ctx.lineTo(i5.x, i5.y)
       this.ctx.closePath()
-      this.ctx.fillStyle = `rgb(150,150,150,${1})`
+      this.ctx.fillStyle = `rgb(${this.color[0] + 100},${this.color[1] + 100},${this.color[2] + 100},${1})`
       this.ctx.fill()
       this.ctx.strokeStyle = `rgb(250,250,250,${1})`
       this.ctx.lineWidth = 1
@@ -198,7 +198,7 @@ export class Obstacle {
       this.ctx.lineTo(i5.x, i5.y)
       this.ctx.lineTo(i1.x, i1.y)
       this.ctx.closePath()
-      this.ctx.fillStyle = `rgb(100,100,100,${1})`
+      this.ctx.fillStyle = `rgb(${this.color[0] + 50},${this.color[1] + 50},${this.color[2] + 50},${1})`
       this.ctx.fill()
       this.ctx.strokeStyle = `rgb(250,250,250,${1})`
       this.ctx.lineWidth = 1
@@ -213,7 +213,7 @@ export class Obstacle {
       this.ctx.lineTo(i6.x, i6.y)
       this.ctx.lineTo(i2.x, i2.y)
       this.ctx.closePath()
-      this.ctx.fillStyle = `rgb(100,100,100,${1})`
+      this.ctx.fillStyle = `rgb(${this.color[0] + 50},${this.color[1] + 50},${this.color[2] + 50},${1})`
       this.ctx.fill()
       this.ctx.strokeStyle = `rgb(250,250,250,${1})`
       this.ctx.lineWidth = 1
