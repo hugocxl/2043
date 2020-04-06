@@ -28,7 +28,7 @@ body {
     font-family: 'Rubik', sans-serif;
     overflow: hidden;
     background-repeat: no-repeat;
-    background-color: cadetblue;
+    background-image: linear-gradient(to bottom, cadetblue 50%, white 100%);
 }
 
 
@@ -47,7 +47,7 @@ body {
 
 #x2043__ship-container {
     position: absolute;
-    bottom: -10px;
+    bottom: 10px;
     z-index: 3;
     left: calc(50% - 140px);
 }
@@ -56,5 +56,4 @@ body {
 #x2043__ship {
     width: 280px;
     height: 260px;
-    transition: all 0.05s ease-in-out;
 }

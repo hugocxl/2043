@@ -163,14 +163,14 @@ export class World {
       : this.clouds.length
 
     for (let i = 0; i < length; i++) {
+      if (this.clouds[i] && (this.clouds[i].position.y > 0)) {
+        this.clouds[i].update(this)
+        clouds.push(this.clouds[i])
+      }
+
       if (this.obstacles[i] && (this.obstacles[i].position.y > 0)) {
         this.obstacles[i].update(this)
         obstacles.push(this.obstacles[i])
-      }
-
-      if (this.clouds[i] && this.clouds[i].d.y + this.clouds[i].length > 0) {
-        this.clouds[i].update(this)
-        clouds.push(this.clouds[i])
       }
     }
 

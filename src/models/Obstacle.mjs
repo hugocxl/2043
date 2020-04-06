@@ -156,7 +156,7 @@ export class Obstacle {
     this.ctx.lineTo(i4.x, i4.y)
     this.ctx.lineTo(i1.x, i1.y)
     this.ctx.closePath()
-    this.ctx.fillStyle = `rgb(0, 0, 0, 0.25)`
+    this.ctx.fillStyle = `rgb(0, 0, 0, 0.1)`
     this.ctx.fill()
   }
 
@@ -225,7 +225,7 @@ export class Obstacle {
     const points = this.get3Dpoints()
 
     this.renderBaseLine(points)
-    // this.renderShadow(points)
+    this.renderShadow(points)
     this.renderFaces(points)
   }
 

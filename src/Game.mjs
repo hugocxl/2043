@@ -4,7 +4,7 @@
 import { Ship, World } from './models/index.mjs'
 
 // Config
-import { config, worldConfigScheme } from './config/index.mjs'
+import { config } from './config/index.mjs'
 
 // Utils
 import { utils } from './utils/index.mjs'
@@ -24,6 +24,7 @@ export class Game {
     this.duration = 0
     this.ship = null
     this.world = null
+    this.worldLevel = 1
   }
 
   setIntervals = () => {
@@ -38,15 +39,16 @@ export class Game {
     minutes = minutes < 10 ? '0' + minutes : minutes
     seconds = seconds < 10 ? '0' + seconds : seconds
 
-    this.duration += 1
+    this.duration += 2
     this.timer.innerText = minutes + ':' + seconds
   }
 
   setWorld = () => {
-    this.world.stop()
+    // this.world.stop()
+    this.worldLevel++
 
     setTimeout(() => {
-      this.world.onWorldChange(utils.generateWorld())
+      this.world.onWorldChange(utils.generateWorld(this.worldLevel))
 
       this.world.start()
     }, config.timeBetweenLevels)
@@ -57,7 +59,7 @@ export class Game {
 
     this.world = new World({
       ...this,
-      config: utils.generateWorld(),
+      config: utils.generateWorld(this.worldLevel),
     })
 
     this.ship.start()

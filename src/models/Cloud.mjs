@@ -4,57 +4,59 @@ import { config } from '../config/index.mjs'
 import { utils } from '../utils/index.mjs'
 
 export class Cloud {
-  constructor ({ elevation, length, width, ctx, canvas, d, height }) {
+  constructor ({ elevation, length, width, ctx, canvas, position, height, perspectiveOrigin, speed, color }) {
     this.length = length
     this.width = width
     this.height = height
     this.ctx = ctx
     this.canvas = canvas
-    this.d = d
-    this.lockedPoints = {}
+    this.position = position
     this.elevation = elevation
+    this.perspectiveOrigin = perspectiveOrigin
+    this.speed = speed
+    this.color = [
+      150,
+      150,
+      150
+    ]
   }
 
   getVanishingPoints = () => {
     return {
-      o: { x: this.canvas.width / 2, y: this.canvas.height / 2 },
-      f1: { x: this.canvas.width / 2 - config.viewPointHeight, y: this.canvas.height / 2 },
-      f2: { x: this.canvas.width / 2 + config.viewPointHeight, y: this.canvas.height / 2 }
+      o: this.perspectiveOrigin,
+      f1: {
+        ...this.perspectiveOrigin,
+        x: this.perspectiveOrigin.x - config.viewPointHeight
+      },
+      f2: {
+        ...this.perspectiveOrigin,
+        x: this.perspectiveOrigin.x + config.viewPointHeight
+      },
     }
   }
 
   getVertex = () => {
-    const { d, width, length, canvas } = this
+    const { position, width, length, canvas } = this
 
     return {
-      v1: { x: d.x, y: d.y + canvas.height },
-      v2: { x: d.x + width, y: d.y + canvas.height },
-      v3: { x: d.x + width, y: d.y + canvas.height + length },
-      v4: { x: d.x, y: d.y + canvas.height + length },
+      v1: { x: position.x, y: position.y + canvas.height },
+      v2: { x: position.x + width, y: position.y + canvas.height },
+      v3: { x: position.x + width, y: position.y + canvas.height + length },
+      v4: { x: position.x, y: position.y + canvas.height + length },
     }
   }
 
   getProyectionPoints = () => {
     return {
-      p1: { x: this.d.x, y: this.canvas.height },
-      pA: { x: this.d.x, y: this.canvas.height / 2 - 200 },
-      p2: { x: this.d.x + this.width, y: this.canvas.height },
-      pB: { x: this.d.x + this.width, y: this.canvas.height / 2 - 200 },
+      p1: { x: this.position.x, y: this.canvas.height },
+      pA: { x: this.position.x, y: this.canvas.height / 2 - 200 },
+      p2: { x: this.position.x + this.width, y: this.canvas.height },
+      pB: { x: this.position.x + this.width, y: this.canvas.height / 2 - 200 },
     }
   }
 
   getIntersectionPoints = (intersection, pA1, pA2, pB1, pB2) => {
-    if (intersection && this.lockedPoints[intersection]) {
-      return this.lockedPoints[intersection]
-    }
-
-    const { x, y } = utils.getIntersectionPointsBetween2Lines(pA1, pA2, pB1, pB2)
-
-    if (intersection && y > this.canvas.height) {
-      this.lockedPoints[intersection] = { x, y }
-    }
-
-    return { x, y }
+    return utils.getIntersectionPointsBetween2Lines(pA1, pA2, pB1, pB2)
   }
 
   getRenderPoints = () => {
@@ -103,24 +105,25 @@ export class Cloud {
     }
   }
 
-  update = () => {
-    this.d = {
-      ...this.d,
-      y: this.d.y - config.speed.cloud
+  update = ({ perspectiveOrigin, position }) => {
+    this.perspectiveOrigin = perspectiveOrigin
+    this.position = {
+      x: this.position.x - position.x,
+      y: this.position.y - this.speed - position.y
     }
   }
 
   move = displacement => {
-    this.d = {
-      ...this.d,
-      x: this.d.x - displacement
+    this.position = {
+      ...this.position,
+      x: this.position.x - displacement
     }
   }
 
   render = () => {
     const { i1, i2, i3, i4, i5, i6, i7, i8 } = this.getRenderPoints()
-    // const opacity = this.d.y > 1
-    //   ? (2 / this.d.y) * 1000000
+    // const opacity = this.position.y > 1
+    //   ? (2 / this.position.y) * 1000000
     //   : 1
 
     const opacity = 1

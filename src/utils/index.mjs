@@ -19,57 +19,69 @@ function getIntersectionPointsBetween2Lines (pA1, pA2, pB1, pB2) {
 }
 
 function generateObstacle ({ u, color }) {
+  const a = Math.random()
+
   const width = u * SCALE_UNIT
-  const height = u * SCALE_UNIT * 10 * Math.random()
+  const height = u * SCALE_UNIT * 5 * Math.random()
   const length = u * SCALE_UNIT
-  const oX = Math.random() * u * 10 * SCALE_UNIT * (Math.round(Math.random()) * 2 - 1)
+  const oX = Math.random() * Math.sqrt(u) * 150 * SCALE_UNIT * (Math.round(Math.random()) * 2 - 1)
 
   return {
     width,
     height,
     length,
     color: [color, color, color],
-    speed: 2000,
+    speed: 200 * Math.round(Math.sqrt(u)),
     position: {
       x: oX,
-      y: 10000 * SCALE_UNIT
+      y: Math.sqrt(u) * 150 * SCALE_UNIT
     },
   }
 }
 
-function generateCloud () {
-  const oX = Math.random() * 5000 * SCALE_UNIT * (Math.round(Math.random()) * 2 - 1)
-  const width = 1000 * SCALE_UNIT * Math.random()
-  const height = 200 * SCALE_UNIT * Math.random()
-  const length = 1000 * SCALE_UNIT * Math.random()
+function generateCloud ({ u, color }) {
+  // const oX = Math.random() * 5000 * SCALE_UNIT * (Math.round(Math.random()) * 2 - 1)
+  // const width = 1000 * SCALE_UNIT * Math.random()
+  // const height = 200 * SCALE_UNIT * Math.random()
+  // const length = 1000 * SCALE_UNIT * Math.random()
+
   const elevation = 10000 * SCALE_UNIT * Math.random()
+  const width = u * 100 * SCALE_UNIT * Math.random()
+  const height = u * 10 * SCALE_UNIT * Math.random()
+  const length = u * 100 * SCALE_UNIT * Math.random()
+  const oX = Math.random() * u * 1000 * SCALE_UNIT * (Math.round(Math.random()) * 2 - 1)
 
   return {
-    d: {
-      x: oX,
-      y: 10000 * SCALE_UNIT
-    },
-    limit: config.itemsLimit,
-    interval: 1000,
     width,
     height,
     length,
+    color: [color, color, color],
+    speed: u * 10,
+    position: {
+      x: oX,
+      y: 1000 * SCALE_UNIT
+    },
     elevation
   }
 }
 
-function generateWorld () {
-  const u = 125
+function generateWorld (i) {
+  const u = i
   const color = 50
 
   return {
     obstacle: {
-      limit: config.itemsLimit,
-      interval: 100,
+      limit: 250,
+      interval: 25,
       color,
       u,
     },
-    cloud: generateCloud()
+    cloud: {
+      limit: 25,
+      interval: 50,
+      color,
+      u,
+    }
   }
 }
 
