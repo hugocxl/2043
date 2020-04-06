@@ -1,25 +1,57 @@
 'use strict'
 
+import { KEYS } from '../constants/index.mjs'
+
 export class Ship {
-  constructor ({ canvas, ctx }) {
+  constructor ({ ctx, canvas }) {
     this.canvas = canvas
     this.ctx = ctx
+    this.pressedKey = null
+    this.ship = document.getElementById('x2043__ship')
+  }
+
+  setListeners = () => {
+    addEventListener('keydown', ({ key }) => {
+      this.pressedKey = key
+    }, true)
+
+    addEventListener('keyup', () => {
+      this.pressedKey = null
+    }, true)
+  }
+
+  setIntervals = () => {
+    setInterval(this.onKeyPress, 10)
+  }
+
+  onKeyPress = () => {
+    switch (this.pressedKey) {
+      case KEYS.LEFT: {
+        this.ship.style.transform = 'translateX(-10px) rotate(-1deg)'
+        break
+      }
+
+      case KEYS.RIGHT: {
+        this.ship.style.transform = 'translateX(10px) rotate(1deg)'
+        break
+      }
+
+      default: {
+        this.ship.style.transform = 'none'
+      }
+    }
+  }
+
+  start = () => {
+    this.setListeners()
+    this.setIntervals()
   }
 
   render = () => {
-    const { height, width } = this.canvas
-
     this.ctx.beginPath()
-    this.ctx.moveTo(width / 2, height - 200)
-    this.ctx.lineTo(width / 2 + 250, height - 50)
-    this.ctx.lineTo(width / 2, height - 130)
-    this.ctx.lineTo(width / 2 - 250, height - 50)
-    this.ctx.lineTo(width / 2, height - 200)
+    this.ctx.arc(this.canvas / 2, this.canvas.height, 4 * 20, 0, Math.PI * 2, true)
     this.ctx.closePath()
-
-    this.ctx.strokeStyle = 'black'
-    this.ctx.xstrokeStyle = 'black'
-    this.ctx.lineWidth = 1
-    this.ctx.stroke()
+    this.ctx.fillStyle = 'rgba(255,233,201,0.05)'
+    this.ctx.fill()
   }
 }

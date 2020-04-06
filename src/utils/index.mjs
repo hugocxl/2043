@@ -20,19 +20,19 @@ function getIntersectionPointsBetween2Lines (pA1, pA2, pB1, pB2) {
 
 function generateObstacle ({ u, color }) {
   const width = u * SCALE_UNIT
-  const height = u * SCALE_UNIT
+  const height = u * SCALE_UNIT * 10 * Math.random()
   const length = u * SCALE_UNIT
-  const oX = Math.random() * u * 50 * SCALE_UNIT * (Math.round(Math.random()) * 2 - 1)
+  const oX = Math.random() * u * 10 * SCALE_UNIT * (Math.round(Math.random()) * 2 - 1)
 
   return {
     width,
     height,
     length,
     color: [color, color, color],
-    speed: 200,
+    speed: 2000,
     position: {
       x: oX,
-      y: 1000 * SCALE_UNIT
+      y: 10000 * SCALE_UNIT
     },
   }
 }
@@ -59,8 +59,8 @@ function generateCloud () {
 }
 
 function generateWorld () {
-  const u = 10
-  const color = Math.floor(Math.random() * 255) + 1
+  const u = 125
+  const color = 50
 
   return {
     obstacle: {

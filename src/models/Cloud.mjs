@@ -134,6 +134,9 @@ export class Cloud {
     this.ctx.closePath()
     this.ctx.fillStyle = `rgb(195,148,169,${opacity})`
     this.ctx.fill()
+    this.ctx.strokeStyle = `rgb(80,80,80,${1})`
+    this.ctx.lineWidth = 1
+    this.ctx.stroke()
 
     this.ctx.beginPath()
     this.ctx.moveTo(i1.x, i1.y)
@@ -144,6 +147,9 @@ export class Cloud {
     this.ctx.closePath()
     this.ctx.fillStyle = `rgb(225,195,195,${opacity})`
     this.ctx.fill()
+    this.ctx.strokeStyle = `rgb(80,80,80,${1})`
+    this.ctx.lineWidth = 1
+    this.ctx.stroke()
 
     if (i1.x > this.canvas.width / 2) {
       this.ctx.beginPath()
@@ -155,6 +161,9 @@ export class Cloud {
       this.ctx.closePath()
       this.ctx.fillStyle = `rgb(255,255,255,${opacity})`
       this.ctx.fill()
+      this.ctx.strokeStyle = `rgb(80,80,80,${1})`
+      this.ctx.lineWidth = 1
+      this.ctx.stroke()
     }
 
     if (i2.x < this.canvas.width / 2) {
@@ -167,6 +176,9 @@ export class Cloud {
       this.ctx.closePath()
       this.ctx.fillStyle = `rgb(255,255,255,${opacity})`
       this.ctx.fill()
+      this.ctx.strokeStyle = `rgb(80,80,80,${1})`
+      this.ctx.lineWidth = 1
+      this.ctx.stroke()
     }
   }
 

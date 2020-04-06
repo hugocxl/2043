@@ -17,9 +17,9 @@ export class Obstacle {
     this.sunPosition = sun.position
     this.speed = speed
     this.color = [
-      Math.floor(Math.random() * 200) + 1,
-      Math.floor(Math.random() * 200) + 1,
-      Math.floor(Math.random() * 200) + 1
+      150,
+      150,
+      150
     ]
   }
 
@@ -86,14 +86,14 @@ export class Obstacle {
       v1,
       v3,
       { x: 0, y: this.canvas.height },
-      { x: 1000, y: this.canvas.height }
+      { x: 800, y: this.canvas.height }
     )
     const b = this.getIntersectionPoints(
       null,
       v2,
       v4,
       { x: 0, y: this.canvas.height },
-      { x: 1000, y: this.canvas.height }
+      { x: 800, y: this.canvas.height }
     )
 
     const i1 = this.getIntersectionPoints('i1', a, f2, p1, o)
@@ -140,7 +140,7 @@ export class Obstacle {
       this.ctx.moveTo(0, i1.y)
       this.ctx.lineTo(this.canvas.width, i1.y)
       this.ctx.closePath()
-      this.ctx.strokeStyle = `rgba(255,255,255,${0.25})`
+      this.ctx.strokeStyle = `rgba(50,50,50,${0.25})`
       this.ctx.lineWidth = 1
       this.ctx.stroke()
     }
@@ -171,7 +171,7 @@ export class Obstacle {
     this.ctx.closePath()
     this.ctx.fillStyle = `rgb(${this.color[0]},${this.color[1]},${this.color[2]},${1})`
     this.ctx.fill()
-    this.ctx.strokeStyle = `rgb(250,250,250,${1})`
+    this.ctx.strokeStyle = `rgb(80,80,80,${1})`
     this.ctx.lineWidth = 1
     this.ctx.stroke()
 
@@ -183,9 +183,9 @@ export class Obstacle {
       this.ctx.lineTo(i8.x, i8.y)
       this.ctx.lineTo(i5.x, i5.y)
       this.ctx.closePath()
-      this.ctx.fillStyle = `rgb(${this.color[0] + 100},${this.color[1] + 100},${this.color[2] + 100},${1})`
+      this.ctx.fillStyle = `rgb(${this.color[0] + 50},${this.color[1] + 50},${this.color[2] + 50},${1})`
       this.ctx.fill()
-      this.ctx.strokeStyle = `rgb(250,250,250,${1})`
+      this.ctx.strokeStyle = `rgb(80,80,80,${1})`
       this.ctx.lineWidth = 1
       this.ctx.stroke()
     }
@@ -200,7 +200,7 @@ export class Obstacle {
       this.ctx.closePath()
       this.ctx.fillStyle = `rgb(${this.color[0] + 50},${this.color[1] + 50},${this.color[2] + 50},${1})`
       this.ctx.fill()
-      this.ctx.strokeStyle = `rgb(250,250,250,${1})`
+      this.ctx.strokeStyle = `rgb(80,80,80,${1})`
       this.ctx.lineWidth = 1
       this.ctx.stroke()
     }
@@ -213,9 +213,9 @@ export class Obstacle {
       this.ctx.lineTo(i6.x, i6.y)
       this.ctx.lineTo(i2.x, i2.y)
       this.ctx.closePath()
-      this.ctx.fillStyle = `rgb(${this.color[0] + 50},${this.color[1] + 50},${this.color[2] + 50},${1})`
+      this.ctx.fillStyle = `rgb(${this.color[0] + 100},${this.color[1] + 100},${this.color[2] + 100},${1})`
       this.ctx.fill()
-      this.ctx.strokeStyle = `rgb(250,250,250,${1})`
+      this.ctx.strokeStyle = `rgb(80,80,80,${1})`
       this.ctx.lineWidth = 1
       this.ctx.stroke()
     }
@@ -225,7 +225,7 @@ export class Obstacle {
     const points = this.get3Dpoints()
 
     this.renderBaseLine(points)
-    this.renderShadow(points)
+    // this.renderShadow(points)
     this.renderFaces(points)
   }
 

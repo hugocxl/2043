@@ -54,11 +54,13 @@ export class Game {
 
   setModels = () => {
     this.ship = new Ship(this)
+
     this.world = new World({
       ...this,
       config: utils.generateWorld(),
     })
 
+    this.ship.start()
     this.world.start()
   }
 

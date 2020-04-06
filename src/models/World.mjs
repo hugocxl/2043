@@ -79,10 +79,10 @@ export class World {
           ...this.position,
           x: this.position.x - 10
         }
-        this.perspectiveOrigin = {
-          ...this.perspectiveOrigin,
-          x: this.perspectiveOrigin.x - 0.25
-        }
+        // this.perspectiveOrigin = {
+        //   ...this.perspectiveOrigin,
+        //   x: this.perspectiveOrigin.x - 0.25
+        // }
         break
       }
 
@@ -91,10 +91,10 @@ export class World {
           ...this.position,
           x: this.position.x + 10
         }
-        this.perspectiveOrigin = {
-          ...this.perspectiveOrigin,
-          x: this.perspectiveOrigin.x + 0.25
-        }
+        // this.perspectiveOrigin = {
+        //   ...this.perspectiveOrigin,
+        //   x: this.perspectiveOrigin.x + 0.25
+        // }
         break
       }
 

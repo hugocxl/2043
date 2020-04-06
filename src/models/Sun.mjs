@@ -6,7 +6,7 @@ export class Sun {
     this.ctx = ctx
     this.radius = radius
     this.position = {
-      x: canvas.width / 2 - 200,
+      x: canvas.width / 2 + 200,
       y: canvas.height / 2 - 200
     }
   }
