@@ -77,7 +77,7 @@ export class World {
       case KEYS.LEFT: {
         this.position = {
           ...this.position,
-          x: this.position.x - 10
+          x: this.position.x - 1
         }
         // this.perspectiveOrigin = {
         //   ...this.perspectiveOrigin,
@@ -89,7 +89,7 @@ export class World {
       case KEYS.RIGHT: {
         this.position = {
           ...this.position,
-          x: this.position.x + 10
+          x: this.position.x + 1
         }
         // this.perspectiveOrigin = {
         //   ...this.perspectiveOrigin,

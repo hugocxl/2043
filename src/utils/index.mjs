@@ -24,7 +24,7 @@ function generateObstacle ({ u, color }) {
   const width = u * SCALE_UNIT
   const height = u * SCALE_UNIT * 5 * Math.random()
   const length = u * SCALE_UNIT
-  const oX = Math.random() * Math.sqrt(u) * 150 * SCALE_UNIT * (Math.round(Math.random()) * 2 - 1)
+  const oX = Math.random() * Math.sqrt(u) * 50 * SCALE_UNIT * (Math.round(Math.random()) * 2 - 1)
 
   return {
     width,
@@ -34,7 +34,7 @@ function generateObstacle ({ u, color }) {
     speed: 200 * Math.round(Math.sqrt(u)),
     position: {
       x: oX,
-      y: Math.sqrt(u) * 150 * SCALE_UNIT
+      y: Math.sqrt(u) * 1000 * SCALE_UNIT
     },
   }
 }
@@ -71,8 +71,8 @@ function generateWorld (i) {
 
   return {
     obstacle: {
-      limit: 250,
-      interval: 25,
+      limit: 100,
+      interval: 200,
       color,
       u,
     },

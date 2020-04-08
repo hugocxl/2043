@@ -33,8 +33,9 @@ export class Ship {
       }
 
       case KEYS.RIGHT: {
-        this.ship.style.transform = 'translateX(15px) rotate(0deg)'
-        this.ship.style.transition = 'none'
+        this.ship.src = 'images/ship/ship-r1.png'
+        // this.ship.style.transform = 'translateX(15px) rotate(0deg)'
+        // this.ship.style.transition = 'none'
         break
       }
 
@@ -52,6 +53,7 @@ export class Ship {
 
       default: {
         this.ship.style.transform = 'none'
+        this.ship.src = 'images/ship/ship-0.png'
       }
     }
   }

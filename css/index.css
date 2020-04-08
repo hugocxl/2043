@@ -28,7 +28,6 @@ body {
     font-family: 'Rubik', sans-serif;
     overflow: hidden;
     background-repeat: no-repeat;
-    background-image: linear-gradient(to bottom, cadetblue 50%, white 100%);
 }
 
 
@@ -38,7 +37,8 @@ body {
 }
 
 #x2043__board-score {
-    color: black;
+    font-size: 50px;
+    color: white;
     position: fixed;
     right: 0;
     top: 0;
@@ -47,13 +47,31 @@ body {
 
 #x2043__ship-container {
     position: absolute;
-    bottom: 10px;
+    bottom: -120px;
     z-index: 3;
-    left: calc(50% - 140px);
+    left: calc(50% - 500px);
 }
 
 
 #x2043__ship {
-    width: 280px;
-    height: 260px;
+    width: 1000px;
+    height: 600px;
+}
+
+#x2043__background {
+    top: 0;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: -1;
+    display: flex;
+    flex-direction: column;
+}
+
+#x2043__background > div {
+    height: 50%
+}
+
+#x2043__background-sky {
+    background-color: black;
 }
