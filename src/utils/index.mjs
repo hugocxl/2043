@@ -34,7 +34,7 @@ function generateObstacle ({ u, color }) {
     speed: 200 * Math.round(Math.sqrt(u)),
     position: {
       x: oX,
-      y: Math.sqrt(u) * 1000 * SCALE_UNIT
+      y: Math.sqrt(u) * 200 * SCALE_UNIT
     },
   }
 }
@@ -72,7 +72,7 @@ function generateWorld (i) {
   return {
     obstacle: {
       limit: 100,
-      interval: 200,
+      interval: 100,
       color,
       u,
     },

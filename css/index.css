@@ -47,15 +47,15 @@ body {
 
 #x2043__ship-container {
     position: absolute;
-    bottom: -120px;
+    bottom: -60px;
     z-index: 3;
-    left: calc(50% - 500px);
+    left: calc(50% - 600px);
 }
 
 
 #x2043__ship {
-    width: 1000px;
-    height: 600px;
+    width: 1200px;
+    height: 700px;
 }
 
 #x2043__background {

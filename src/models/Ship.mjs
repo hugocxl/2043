@@ -8,6 +8,7 @@ export class Ship {
     this.ctx = ctx
     this.pressedKey = null
     this.ship = document.getElementById('x2043__ship')
+    this.translate = 0
   }
 
   setListeners = () => {
@@ -22,19 +23,39 @@ export class Ship {
 
   setIntervals = () => {
     setInterval(this.onKeyPress, 10)
+    setInterval(this.setShipImage, 1)
+
+  }
+
+  setShipImage = () => {
+    if (!this.translate) {
+      this.ship.src = 'images/ship/ship-0.png'
+    } else {
+      const i = Math.round(this.translate)
+      if (this.translate > 0) {
+        this.ship.src = `images/ship/ship-r${i}.png`
+      } else {
+        this.ship.src = `images/ship/ship-l${-i}.png`
+      }
+    }
   }
 
   onKeyPress = () => {
     switch (this.pressedKey) {
       case KEYS.LEFT: {
-        this.ship.style.transform = 'translateX(-15px) rotate(-0deg)'
-        this.ship.style.transition = 'none'
+        if (this.translate > -7) {
+          this.translate -= 0.5
+        }
+        // this.ship.style.transform = 'translateX(-15px) rotate(-0deg)'
+        // this.ship.style.transition = 'none'
         break
       }
 
       case KEYS.RIGHT: {
-        this.ship.src = 'images/ship/ship-r1.png'
-        // this.ship.style.transform = 'translateX(15px) rotate(0deg)'
+        if (this.translate < 7) {
+          this.translate += 0.5
+        }
+        this.ship.style.transform = 'translateX(50px)'
         // this.ship.style.transition = 'none'
         break
       }
@@ -52,8 +73,19 @@ export class Ship {
       }
 
       default: {
+        if (this.translate) {
+          if (this.translate > -0.5 && this.translate < 0.5) {
+            this.ship.src = 'images/ship/ship-0.png'
+            this.translate = 0
+          }
+
+          this.translate = this.translate > 0
+            ? this.translate = this.translate - 0.5
+            : this.translate = this.translate + 0.5
+        }
+
         this.ship.style.transform = 'none'
-        this.ship.src = 'images/ship/ship-0.png'
+        // this.ship.src = 'images/ship/ship-0.png'
       }
     }
   }
