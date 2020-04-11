@@ -21,20 +21,20 @@ function getIntersectionPointsBetween2Lines (pA1, pA2, pB1, pB2) {
 function generateObstacle ({ u, color }) {
   const a = Math.random()
 
-  const width = u * SCALE_UNIT
-  const height = u * SCALE_UNIT * 5 * Math.random()
-  const length = u * SCALE_UNIT
-  const oX = Math.random() * Math.sqrt(u) * 50 * SCALE_UNIT * (Math.round(Math.random()) * 2 - 1)
+  const width = 500
+  const height = 500
+  const length = 500
+  const oX = 5000 * (Math.random() * 2 - 1)
 
   return {
     width,
     height,
     length,
     color: [color, color, color],
-    speed: 200 * Math.round(Math.sqrt(u)),
+    speed: 150,
     position: {
       x: oX,
-      y: Math.sqrt(u) * 200 * SCALE_UNIT
+      y: 25000
     },
   }
 }

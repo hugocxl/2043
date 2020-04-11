@@ -35,10 +35,11 @@ export class World {
     this.position = { x: 0, y: 0 }
     this.perspectiveOrigin = {
       x: canvas.width / 2,
-      y: canvas.height / 2
+      y: canvas.height / 2 + 20
     }
     this.addCloudInterval = null
     this.addObstacleInterval = null
+    this.higherViewPoint = null
   }
 
   setListeners = () => {
@@ -58,6 +59,7 @@ export class World {
 
   setIntervals = () => {
     setInterval(this.onKeyPress, 10)
+    setInterval(this.modifyViewPoint, 50)
 
     this.addCloudInterval = setInterval(() => {
       if (this.obstacles.length < this.config.obstacle.limit) {
@@ -72,44 +74,62 @@ export class World {
     }, this.config.cloud.interval)
   }
 
+  modifyViewPoint = () => {
+    const x = 25 * (Math.random() * 2 - 1)
+    // const x = 0
+    const y = 50 * (Math.random() * 2 - 1)
+    this.perspectiveOrigin = {
+      x: this.perspectiveOrigin.x + x,
+      y: this.perspectiveOrigin.y + y,
+    }
+  }
+
   onKeyPress = () => {
     switch (this.pressedKey) {
       case KEYS.LEFT: {
-        this.position = {
-          ...this.position,
-          x: this.position.x - 1
-        }
-        // this.perspectiveOrigin = {
-        //   ...this.perspectiveOrigin,
-        //   x: this.perspectiveOrigin.x - 0.25
+        // this.position = {
+        //   ...this.position,
+        //   x: this.position.x - 1
         // }
+        this.perspectiveOrigin = {
+          ...this.perspectiveOrigin,
+          x: this.perspectiveOrigin.x - 0.25
+        }
         break
       }
 
       case KEYS.RIGHT: {
-        this.position = {
-          ...this.position,
-          x: this.position.x + 1
-        }
-        // this.perspectiveOrigin = {
-        //   ...this.perspectiveOrigin,
-        //   x: this.perspectiveOrigin.x + 0.25
+        // this.position = {
+        //   ...this.position,
+        //   x: this.position.x + 1
         // }
+        this.perspectiveOrigin = {
+          ...this.perspectiveOrigin,
+          x: this.perspectiveOrigin.x + 0.25
+        }
         break
       }
 
       case KEYS.UP: {
-        this.position = {
-          ...this.position,
-          y: this.position.y + 1
+        // this.position = {
+        //   ...this.position,
+        //   y: this.position.y + 1
+        // }
+        this.perspectiveOrigin = {
+          ...this.perspectiveOrigin,
+          y: this.perspectiveOrigin.y + 0.25
         }
         break
       }
 
       case KEYS.DOWN: {
-        this.position = {
-          ...this.position,
-          y: this.position.y - 1
+        // this.position = {
+        //   ...this.position,
+        //   y: this.position.y - 1
+        // }
+        this.perspectiveOrigin = {
+          ...this.perspectiveOrigin,
+          y: this.perspectiveOrigin.y - 0.25
         }
         break
       }
@@ -184,9 +204,20 @@ export class World {
   }
 
   render = () => {
-    this.sun.render()
-    this.clouds.forEach(cloud => cloud.render())
-    this.obstacles.forEach(obstacle => obstacle.render())
+    // this.sun.render()
+    // this.clouds.forEach(cloud => cloud.render())
+    let higherViewPoint = null
+    this.obstacles.forEach((obstacle, i) => {
+      if (!higherViewPoint) {
+        higherViewPoint = obstacle.perspectiveOrigin.y
+      }
+
+      if (obstacle.perspectiveOrigin.y + 50 >= higherViewPoint) {
+        higherViewPoint = obstacle.perspectiveOrigin.y
+        obstacle.render({ base: true })
+        obstacle.renderBaseLine()
+      }
+    })
   }
 
   start = () => {

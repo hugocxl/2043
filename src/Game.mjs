@@ -29,7 +29,7 @@ export class Game {
 
   setIntervals = () => {
     this.timerInterval = setInterval(this.setTime, 1000)
-    this.worldInterval = setInterval(this.setWorld, config.levelDuration)
+    // this.worldInterval = setInterval(this.setWorld, config.levelDuration)
   }
 
   setTime = () => {
@@ -55,14 +55,14 @@ export class Game {
   }
 
   setModels = () => {
-    this.ship = new Ship(this)
+    // this.ship = new Ship(this)
 
     this.world = new World({
       ...this,
       config: utils.generateWorld(this.worldLevel),
     })
 
-    this.ship.start()
+    // this.ship.start()
     this.world.start()
   }
 
@@ -78,7 +78,7 @@ export class Game {
 
   render = () => {
     this.world.render()
-    this.ship.render()
+    // this.ship.render()
   }
 
   stop = () => {

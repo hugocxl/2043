@@ -21,6 +21,11 @@ export class Obstacle {
       150,
       150
     ]
+    this.n = position.y / speed
+    this.growth = {
+      x: (perspectiveOrigin.x - canvas.width / 2) / (position.y / speed),
+      y: (perspectiveOrigin.y - canvas.height / 2) / (position.y / speed),
+    }
   }
 
   getVanishingPoints = () => {
@@ -126,15 +131,21 @@ export class Obstacle {
   }
 
   update = ({ perspectiveOrigin, position, sun }) => {
-    this.sunPosition = sun.position
-    this.perspectiveOrigin = perspectiveOrigin
+    // this.sunPosition = sun.position
+    this.perspectiveOrigin = {
+      x: this.perspectiveOrigin.x - this.growth.x,
+      y: this.perspectiveOrigin.y - this.growth.y,
+    }
+
     this.position = {
       x: this.position.x - position.x,
       y: this.position.y - this.speed - position.y
     }
   }
 
-  renderBaseLine = ({ o, i1, i2, i3, i4, i5, i8, i6, i7, s1, s2, s3 }) => {
+  renderBaseLine = () => {
+    const { i1, i3, i2, i4 } = this.get3Dpoints()
+
     if (this.position.y > 1) {
       this.ctx.beginPath()
       this.ctx.moveTo(0, i1.y)
@@ -143,6 +154,46 @@ export class Obstacle {
       this.ctx.strokeStyle = `rgba(50,50,50,${0.25})`
       this.ctx.lineWidth = 1
       this.ctx.stroke()
+    }
+
+    if (i1.x > this.canvas.width / 2) {
+      this.ctx.beginPath()
+      this.ctx.moveTo(0, i4.y)
+      this.ctx.lineTo(i4.x, i4.y)
+      this.ctx.lineTo(i1.x, i1.y)
+      this.ctx.lineTo(0, i1.y)
+      this.ctx.closePath()
+      this.ctx.fillStyle = `rgba(50, 50, 50, 1)`
+      this.ctx.fill()
+
+      this.ctx.beginPath()
+      this.ctx.moveTo(this.canvas.width, i3.y)
+      this.ctx.lineTo(i2.x, i3.y)
+      this.ctx.lineTo(i2.x, i2.y)
+      this.ctx.lineTo(this.canvas.width, i2.y)
+      this.ctx.closePath()
+      this.ctx.fillStyle = `rgba(50, 50, 50, 1)`
+      this.ctx.fill()
+    }
+
+    if (i2.x > this.canvas.width / 2) {
+      this.ctx.beginPath()
+      this.ctx.moveTo(0, i4.y)
+      this.ctx.lineTo(i1.x, i4.y)
+      this.ctx.lineTo(i1.x, i1.y)
+      this.ctx.lineTo(0, i1.y)
+      this.ctx.closePath()
+      this.ctx.fillStyle = `rgba(50, 50, 50, 1)`
+      this.ctx.fill()
+
+      this.ctx.beginPath()
+      this.ctx.moveTo(this.canvas.width, i3.y)
+      this.ctx.lineTo(i3.x, i3.y)
+      this.ctx.lineTo(i2.x, i2.y)
+      this.ctx.lineTo(this.canvas.width, i2.y)
+      this.ctx.closePath()
+      this.ctx.fillStyle = `rgba(50, 50, 50, 1)`
+      this.ctx.fill()
     }
   }
 
@@ -221,10 +272,12 @@ export class Obstacle {
     }
   }
 
-  render = () => {
+  render = ({ base }) => {
     const points = this.get3Dpoints()
 
-    this.renderBaseLine(points)
+    if (base) {
+      this.renderBaseLine(points)
+    }
     this.renderShadow(points)
     this.renderFaces(points)
   }
