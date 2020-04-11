@@ -18,11 +18,11 @@ function getIntersectionPointsBetween2Lines (pA1, pA2, pB1, pB2) {
   }
 }
 
-function generateObstacle ({ u, color }) {
+function generateObstacle ({ u, color, index, speed }) {
   const a = Math.random()
 
   const width = 500
-  const height = 500
+  const height = 2500 * Math.random()
   const length = 500
   const oX = 5000 * (Math.random() * 2 - 1)
 
@@ -31,10 +31,10 @@ function generateObstacle ({ u, color }) {
     height,
     length,
     color: [color, color, color],
-    speed: 150,
+    speed,
     position: {
       x: oX,
-      y: 25000
+      y: 50000 + 1000 * index
     },
   }
 }
@@ -45,24 +45,24 @@ function generateCloud ({ u, color }) {
   // const height = 200 * SCALE_UNIT * Math.random()
   // const length = 1000 * SCALE_UNIT * Math.random()
 
-  const elevation = 10000 * SCALE_UNIT * Math.random()
-  const width = u * 100 * SCALE_UNIT * Math.random()
-  const height = u * 10 * SCALE_UNIT * Math.random()
-  const length = u * 100 * SCALE_UNIT * Math.random()
-  const oX = Math.random() * u * 1000 * SCALE_UNIT * (Math.round(Math.random()) * 2 - 1)
-
-  return {
-    width,
-    height,
-    length,
-    color: [color, color, color],
-    speed: u * 10,
-    position: {
-      x: oX,
-      y: 1000 * SCALE_UNIT
-    },
-    elevation
-  }
+  // const elevation = 10000 * SCALE_UNIT * Math.random()
+  // const width = u * 100 * SCALE_UNIT * Math.random()
+  // const height = u * 10 * SCALE_UNIT * Math.random()
+  // const length = u * 100 * SCALE_UNIT * Math.random()
+  // const oX = Math.random() * u * 1000 * SCALE_UNIT * (Math.round(Math.random()) * 2 - 1)
+  //
+  // return {
+  //   width,
+  //   height,
+  //   length,
+  //   color: [color, color, color],
+  //   speed: u * 10,
+  //   position: {
+  //     x: oX,
+  //     y: 1000 * SCALE_UNIT
+  //   },
+  //   elevation
+  // }
 }
 
 function generateWorld (i) {
@@ -72,7 +72,7 @@ function generateWorld (i) {
   return {
     obstacle: {
       limit: 100,
-      interval: 100,
+      interval: 500,
       color,
       u,
     },

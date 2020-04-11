@@ -61,15 +61,15 @@ export class Obstacle {
   }
 
   getIntersectionPoints = (intersection, pA1, pA2, pB1, pB2) => {
-    if (intersection && this.lockedPoints[intersection]) {
-      return this.lockedPoints[intersection]
-    }
+    // if (intersection && this.lockedPoints[intersection]) {
+    //   return this.lockedPoints[intersection]
+    // }
 
     const { x, y } = utils.getIntersectionPointsBetween2Lines(pA1, pA2, pB1, pB2)
 
-    if (intersection && y > this.canvas.height) {
-      this.lockedPoints[intersection] = { x, y }
-    }
+    // if (intersection && y > this.canvas.height) {
+    //   this.lockedPoints[intersection] = { x, y }
+    // }
 
     return { x, y }
   }
@@ -272,13 +272,11 @@ export class Obstacle {
     }
   }
 
-  render = ({ base }) => {
+  render = () => {
     const points = this.get3Dpoints()
 
-    if (base) {
-      this.renderBaseLine(points)
-    }
-    this.renderShadow(points)
+    // this.renderBaseLine(points)
+    // this.renderShadow(points)
     this.renderFaces(points)
   }
 

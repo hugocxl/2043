@@ -23,7 +23,7 @@ window.onload = function () {
   }
 
   function setIntervals () {
-    window.setInterval(setCanvasTranslation, 50)
+    // window.setInterval(setCanvasTranslation, 50)
   }
 
   function setListeners () {

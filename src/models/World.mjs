@@ -1,7 +1,7 @@
 'use strict'
 
 // Models
-import { Cloud, Obstacle, Sun } from './index.mjs'
+import { Cloud, Obstacle, Sun, Road } from './index.mjs'
 
 // Constants
 import { CLOUD, OBSTACLE, KEYS } from '../constants/index.mjs'
@@ -35,11 +35,11 @@ export class World {
     this.position = { x: 0, y: 0 }
     this.perspectiveOrigin = {
       x: canvas.width / 2,
-      y: canvas.height / 2 + 20
+      y: canvas.height / 2
     }
     this.addCloudInterval = null
     this.addObstacleInterval = null
-    this.higherViewPoint = null
+    this.sections = []
   }
 
   setListeners = () => {
@@ -49,123 +49,107 @@ export class World {
 
     addEventListener('keyup', () => {
       this.pressedKey = null
-      this.position = { x: 0, y: 0 }
-      this.perspectiveOrigin = {
-        x: this.canvas.width / 2,
-        y: this.canvas.height / 2
-      }
     }, true)
   }
 
   setIntervals = () => {
     setInterval(this.onKeyPress, 10)
-    setInterval(this.modifyViewPoint, 50)
-
-    this.addCloudInterval = setInterval(() => {
-      if (this.obstacles.length < this.config.obstacle.limit) {
-        this.addItem(OBSTACLE)
-      }
-    }, this.config.obstacle.interval)
-
-    this.addObstacleInterval = setInterval(() => {
-      if (this.clouds.length < this.config.cloud.limit) {
-        this.addItem(CLOUD)
-      }
-    }, this.config.cloud.interval)
+    // setInterval(this.onChangeSection, 10000)
   }
 
-  modifyViewPoint = () => {
-    const x = 25 * (Math.random() * 2 - 1)
-    // const x = 0
-    const y = 50 * (Math.random() * 2 - 1)
-    this.perspectiveOrigin = {
-      x: this.perspectiveOrigin.x + x,
-      y: this.perspectiveOrigin.y + y,
+  onChangeSection = () => {
+    const section = this.generateSection()
+
+    if (this.sections.length < 1) {
+      this.sections = [
+        section,
+        ...this.sections
+      ]
+    } else {
+      this.sections = [
+        section,
+        ...this.sections.filter((el, i) => i),
+      ]
+    }
+  }
+
+  generateSection = () => {
+    let obstacles = []
+    const x = 100 * (Math.random() * 2 - 1)
+    const y = 100 * (Math.random() * 2 - 1)
+
+    const speed = 250
+    // const newPerspectiveOrigin = {
+    //   x: this.perspectiveOrigin.x + x,
+    //   y: this.perspectiveOrigin.y + y,
+    // }
+    const newPerspectiveOrigin = this.perspectiveOrigin
+
+    const sectionLength = speed * 500
+    const sectionWidth = 5000
+
+    const itemLength = sectionLength / 25
+    const itemPosition = sectionLength / 25
+
+    for (let i = 0; i < 50; i++) {
+      obstacles.unshift(
+        new Obstacle({
+          ...this,
+          ctx: this.ctx,
+          canvas: this.canvas,
+          ...utils.generateObstacle({
+            index: i,
+            speed
+          }),
+          perspectiveOrigin: newPerspectiveOrigin,
+          position: {
+            x: sectionWidth * (Math.random() * 2 - 1),
+            y: 50000 + (itemPosition * i),
+          }
+        })
+      )
+    }
+
+    return {
+      obstacles,
+      road: new Road({
+        ...this,
+        perspectiveOrigin: newPerspectiveOrigin,
+        length: sectionLength,
+        speed,
+        width: sectionWidth,
+        position: {
+          x: -2500,
+          y: 50000
+        }
+      })
     }
   }
 
   onKeyPress = () => {
     switch (this.pressedKey) {
       case KEYS.LEFT: {
-        // this.position = {
-        //   ...this.position,
-        //   x: this.position.x - 1
-        // }
-        this.perspectiveOrigin = {
-          ...this.perspectiveOrigin,
-          x: this.perspectiveOrigin.x - 0.25
+        this.position = {
+          ...this.position,
+          x: this.position.x - 10
         }
         break
       }
 
       case KEYS.RIGHT: {
-        // this.position = {
-        //   ...this.position,
-        //   x: this.position.x + 1
-        // }
-        this.perspectiveOrigin = {
-          ...this.perspectiveOrigin,
-          x: this.perspectiveOrigin.x + 0.25
+        this.position = {
+          ...this.position,
+          x: this.position.x + 10
         }
         break
       }
 
       case KEYS.UP: {
-        // this.position = {
-        //   ...this.position,
-        //   y: this.position.y + 1
-        // }
-        this.perspectiveOrigin = {
-          ...this.perspectiveOrigin,
-          y: this.perspectiveOrigin.y + 0.25
-        }
         break
       }
 
       case KEYS.DOWN: {
-        // this.position = {
-        //   ...this.position,
-        //   y: this.position.y - 1
-        // }
-        this.perspectiveOrigin = {
-          ...this.perspectiveOrigin,
-          y: this.perspectiveOrigin.y - 0.25
-        }
         break
-      }
-    }
-  }
-
-  addItem = type => {
-    switch (type) {
-      case OBSTACLE: {
-        this.obstacles = [
-          new Obstacle({
-            ...this,
-            ctx: this.ctx,
-            canvas: this.canvas,
-            ...utils.generateObstacle(this.config.obstacle),
-          }),
-          ...this.obstacles
-        ]
-        break
-      }
-
-      case CLOUD : {
-        this.clouds = [
-          new Cloud({
-            ...this,
-            ctx: this.ctx,
-            canvas: this.canvas,
-            ...utils.generateCloud(this.config.cloud),
-          }),
-          ...this.clouds
-        ]
-        break
-      }
-
-      default: {
-        throw new Error('ITEM TYPE NOT SPECIFIED')
       }
     }
   }
@@ -175,52 +159,30 @@ export class World {
   }
 
   update = () => {
-    const obstacles = []
-    const clouds = []
-
-    const length = this.obstacles.length > this.clouds.length
-      ? this.obstacles.length
-      : this.clouds.length
-
-    for (let i = 0; i < length; i++) {
-      if (this.clouds[i] && (this.clouds[i].position.y > 0)) {
-        this.clouds[i].update(this)
-        clouds.push(this.clouds[i])
-      }
-
-      if (this.obstacles[i] && (this.obstacles[i].position.y > 0)) {
-        this.obstacles[i].update(this)
-        obstacles.push(this.obstacles[i])
-      }
-    }
-
-    this.obstacles = obstacles
-    this.clouds = clouds
+    this.sections.forEach(section => {
+      section.road.update(this)
+      section.obstacles.forEach(obs => obs.update(this))
+    })
   }
 
   stop = () => {
     clearInterval(this.addObstacleInterval)
-    clearInterval(this.addCloudInterval)
+    // clearInterval(this.addCloudInterval)
   }
 
   render = () => {
-    // this.sun.render()
-    // this.clouds.forEach(cloud => cloud.render())
-    let higherViewPoint = null
-    this.obstacles.forEach((obstacle, i) => {
-      if (!higherViewPoint) {
-        higherViewPoint = obstacle.perspectiveOrigin.y
-      }
-
-      if (obstacle.perspectiveOrigin.y + 50 >= higherViewPoint) {
-        higherViewPoint = obstacle.perspectiveOrigin.y
-        obstacle.render({ base: true })
-        obstacle.renderBaseLine()
-      }
+    this.sections.forEach(section => {
+      section.road.render()
+      section.obstacles.forEach(obs => {
+        if (obs.position.y + obs.length > 0) {
+          obs.render()
+        }
+      })
     })
   }
 
   start = () => {
+    this.onChangeSection()
     this.setListeners()
     this.setIntervals()
   }
