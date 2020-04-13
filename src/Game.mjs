@@ -23,7 +23,11 @@ export class Game {
     this.worldInterval = null
     this.duration = 0
     this.ship = null
-    this.world = null
+    this.world = new World({
+      ...this,
+      config: utils.generateWorld(1),
+    })
+
     this.worldLevel = 1
   }
 
@@ -56,11 +60,6 @@ export class Game {
 
   setModels = () => {
     // this.ship = new Ship(this)
-
-    this.world = new World({
-      ...this,
-      config: utils.generateWorld(this.worldLevel),
-    })
 
     // this.ship.start()
     this.world.start()

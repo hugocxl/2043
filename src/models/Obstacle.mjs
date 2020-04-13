@@ -26,6 +26,7 @@ export class Obstacle {
       x: (perspectiveOrigin.x - canvas.width / 2) / (position.y / speed),
       y: (perspectiveOrigin.y - canvas.height / 2) / (position.y / speed),
     }
+    this.calls = 0
   }
 
   getVanishingPoints = () => {
@@ -60,24 +61,20 @@ export class Obstacle {
     }
   }
 
-  getIntersectionPoints = (intersection, pA1, pA2, pB1, pB2) => {
-    // if (intersection && this.lockedPoints[intersection]) {
-    //   return this.lockedPoints[intersection]
-    // }
-
+  getIntersectionPoints = (pA1, pA2, pB1, pB2) => {
     const { x, y } = utils.getIntersectionPointsBetween2Lines(pA1, pA2, pB1, pB2)
 
-    // if (intersection && y > this.canvas.height) {
-    //   this.lockedPoints[intersection] = { x, y }
-    // }
-
-    return { x, y }
+    return {
+      x,
+      y
+    }
   }
 
-  get3Dpoints = () => {
+  getPoints = () => {
     const { v1, v2, v3, v4 } = this.getVertex()
     const { f1, f2, o } = this.getVanishingPoints()
     const { p1, p2 } = this.getProyectionPoints()
+
     const sunProyection = {
       ...this.sunPosition,
       y: this.canvas.height / 2
@@ -86,33 +83,68 @@ export class Obstacle {
     const h1 = { x: p1.x, y: p1.y - this.height }
     const h2 = { x: p2.x, y: p2.y - this.height }
 
-    const a = this.getIntersectionPoints(
-      null,
-      v1,
-      v3,
-      { x: 0, y: this.canvas.height },
-      { x: 800, y: this.canvas.height }
-    )
-    const b = this.getIntersectionPoints(
-      null,
-      v2,
-      v4,
-      { x: 0, y: this.canvas.height },
-      { x: 800, y: this.canvas.height }
-    )
+    let i1
+    let i2
+    let i3
+    let i4
+    let i5
+    let i6
+    let i7
+    let i8
+    let s1
+    let s2
+    let s3
 
-    const i1 = this.getIntersectionPoints('i1', a, f2, p1, o)
-    const i2 = this.getIntersectionPoints('i2', b, f1, p2, o)
-    const i3 = this.getIntersectionPoints('i3', a, f2, p2, o)
-    const i4 = this.getIntersectionPoints('i4', b, f1, p1, o)
-    const i5 = this.getIntersectionPoints('i5', i1, { x: i1.x, y: 0 }, o, h1)
-    const i6 = this.getIntersectionPoints('i6', i2, { x: i2.x, y: 0 }, o, h2)
-    const i7 = this.getIntersectionPoints('i7', i3, { x: i3.x, y: 0 }, o, h2)
-    const i8 = this.getIntersectionPoints('i8', i4, { x: i4.x, y: 0 }, o, h1)
+    if (v1.y >= this.canvas.height) {
+      const x1 = { x: 0, y: this.canvas.height }
+      const x2 = { x: 1, y: this.canvas.height }
 
-    const s1 = this.getIntersectionPoints('s1', i2, sunProyection, i6, this.sunPosition)
-    const s2 = this.getIntersectionPoints('s2', i1, sunProyection, i5, this.sunPosition)
-    const s3 = this.getIntersectionPoints('s3', i4, sunProyection, i8, this.sunPosition)
+      const a = this.getIntersectionPoints(v1, v3, x1, x2)
+      const b = this.getIntersectionPoints(v2, v4, x1, x2)
+
+      i1 = this.getIntersectionPoints(a, f2, p1, o)
+      i2 = this.getIntersectionPoints(b, f1, p2, o)
+      i3 = this.getIntersectionPoints(a, f2, p2, o)
+      i4 = this.getIntersectionPoints(b, f1, p1, o)
+      i5 = this.getIntersectionPoints(i1, { x: i1.x, y: 0 }, o, h1)
+      i6 = this.getIntersectionPoints(i2, { x: i2.x, y: 0 }, o, h2)
+      i7 = this.getIntersectionPoints(i3, { x: i3.x, y: 0 }, o, h2)
+      i8 = this.getIntersectionPoints(i4, { x: i4.x, y: 0 }, o, h1)
+      s1 = this.getIntersectionPoints(i2, sunProyection, i6, this.sunPosition)
+      s2 = this.getIntersectionPoints(i1, sunProyection, i5, this.sunPosition)
+      s3 = this.getIntersectionPoints(i4, sunProyection, i8, this.sunPosition)
+    } else {
+      const tan45 = Math.tan(45 * Math.PI / 180)
+
+      const auxV1 = {
+        x: p1.x - ((v1.y - p1.y) / tan45),
+        y: this.canvas.height
+      }
+
+      const auxV2 = {
+        x: p2.x - ((v2.y - p2.y) / tan45),
+        y: this.canvas.height,
+      }
+
+      const auxV3 = {
+        x: p2.x - ((v3.y - p2.y) / tan45),
+        y: this.canvas.height
+      }
+
+      const auxV4 = {
+        x: p1.x - ((v4.y - p1.y) / tan45),
+        y: this.canvas.height
+      }
+
+      i1 = this.getIntersectionPoints(o, p1, auxV1, f2)
+      i2 = this.getIntersectionPoints(o, p2, auxV2, f2)
+      i3 = this.getIntersectionPoints(o, p2, auxV3, f2)
+      i4 = this.getIntersectionPoints(o, p1, auxV4, f2)
+      i5 = this.getIntersectionPoints(i1, { x: i1.x, y: 0 }, o, h1)
+      i6 = this.getIntersectionPoints(i2, { x: i2.x, y: 0 }, o, h2)
+      i7 = this.getIntersectionPoints(i3, { x: i3.x, y: 0 }, o, h2)
+      i8 = this.getIntersectionPoints(i4, { x: i4.x, y: 0 }, o, h1)
+    }
 
     return {
       o,
@@ -131,20 +163,21 @@ export class Obstacle {
   }
 
   update = ({ perspectiveOrigin, position, sun }) => {
-    // this.sunPosition = sun.position
+    this.sunPosition = sun.position
     this.perspectiveOrigin = {
       x: this.perspectiveOrigin.x - this.growth.x,
       y: this.perspectiveOrigin.y - this.growth.y,
     }
 
     this.position = {
-      x: this.position.x - position.x,
+      // x: this.position.x - position.x,
+      ...this.position,
       y: this.position.y - this.speed - position.y
     }
   }
 
   renderBaseLine = () => {
-    const { i1, i3, i2, i4 } = this.get3Dpoints()
+    const { i1, i3, i2, i4 } = this.getPoints()
 
     if (this.position.y > 1) {
       this.ctx.beginPath()
@@ -212,6 +245,7 @@ export class Obstacle {
   }
 
   renderFaces = ({ o, i1, i2, i3, i4, i5, i8, i6, i7, s1, s2, s3 }) => {
+
     this.ctx.beginPath()
     this.ctx.moveTo(i1.x, i1.y)
     this.ctx.lineTo(i2.x, i2.y)
@@ -272,12 +306,22 @@ export class Obstacle {
     }
   }
 
-  render = () => {
-    const points = this.get3Dpoints()
+  test = ({ i1, i2, i3, i4 }) => {
+    this.ctx.beginPath()
+    this.ctx.moveTo(i1.x, i1.y)
+    this.ctx.lineTo(i2.x, i2.y)
+    this.ctx.lineTo(i3.x, i3.y)
+    this.ctx.lineTo(i4.x, i4.y)
+    this.ctx.lineTo(i1.x, i1.y)
+    this.ctx.closePath()
+    this.ctx.fillStyle = `black`
+    this.ctx.fill()
+  }
 
-    // this.renderBaseLine(points)
+  render = () => {
+    const points = this.getPoints()
+    this.renderBaseLine(points)
     // this.renderShadow(points)
     this.renderFaces(points)
   }
-
 }

@@ -1,7 +1,7 @@
 'use strict'
 
 // Models
-import { Cloud, Obstacle, Sun, Road } from './index.mjs'
+import { Cloud, Obstacle, Road } from './index.mjs'
 
 // Constants
 import { CLOUD, OBSTACLE, KEYS } from '../constants/index.mjs'
@@ -11,6 +11,8 @@ import { config } from '../config/index.mjs'
 
 // Utils
 import { utils } from '../utils/index.mjs'
+
+const SECTION_DURATION = 5
 
 export class World {
   constructor ({
@@ -23,23 +25,21 @@ export class World {
     this.ctx = ctx
     this.canvas = canvas
     this.config = config
-    this.obstacles = []
-    this.clouds = []
-    this.board = null
-    this.sun = new Sun({
-      canvas,
-      ctx,
-      radius: 25
-    })
+    this.sections = []
+    this.sun = {
+      position: {
+        x: canvas.width + 200,
+        y: canvas.height - 200
+      }
+    }
     this.pressedKey = null
     this.position = { x: 0, y: 0 }
     this.perspectiveOrigin = {
       x: canvas.width / 2,
       y: canvas.height / 2
     }
-    this.addCloudInterval = null
-    this.addObstacleInterval = null
-    this.sections = []
+
+    this.sectionInterval = null
   }
 
   setListeners = () => {
@@ -53,50 +53,58 @@ export class World {
   }
 
   setIntervals = () => {
-    setInterval(this.onKeyPress, 10)
-    // setInterval(this.onChangeSection, 10000)
+    // setInterval(this.onKeyPress, 100)
+    this.sectionInterval = setInterval(this.onChangeSection, SECTION_DURATION * 1000)
   }
 
   onChangeSection = () => {
     const section = this.generateSection()
 
-    if (this.sections.length < 1) {
+    if (this.sections.length < 2) {
       this.sections = [
         section,
         ...this.sections
       ]
     } else {
+      this.sections.pop()
+
       this.sections = [
         section,
-        ...this.sections.filter((el, i) => i),
+        ...this.sections
       ]
     }
   }
 
   generateSection = () => {
     let obstacles = []
-    const x = 100 * (Math.random() * 2 - 1)
-    const y = 100 * (Math.random() * 2 - 1)
+    const x = 250 * (Math.random() * 2 - 1)
+    const y = 250 * (Math.random() * 2 - 1)
 
-    const speed = 250
-    // const newPerspectiveOrigin = {
-    //   x: this.perspectiveOrigin.x + x,
-    //   y: this.perspectiveOrigin.y + y,
-    // }
-    const newPerspectiveOrigin = this.perspectiveOrigin
+    const previousSection = this.sections.length
+      ? this.sections[0]
+      : null
 
-    const sectionLength = speed * 500
-    const sectionWidth = 5000
+    const yPosition = previousSection
+      ? previousSection.road.position.y + previousSection.road.length
+      : 0
 
-    const itemLength = sectionLength / 25
-    const itemPosition = sectionLength / 25
+    const newPerspectiveOrigin = {
+      x: this.perspectiveOrigin.x + x,
+      y: this.perspectiveOrigin.y + y,
+    }
 
-    for (let i = 0; i < 50; i++) {
+    const speed = 100
+    const sectionLength = speed * 60 * SECTION_DURATION
+    const sectionWidth = sectionLength / 4
+    const nObstacles = 50
+
+    const itemLength = sectionLength / (nObstacles * 2)
+    const itemPosition = sectionLength / nObstacles
+
+    for (let i = 0; i < nObstacles; i++) {
       obstacles.unshift(
         new Obstacle({
           ...this,
-          ctx: this.ctx,
-          canvas: this.canvas,
           ...utils.generateObstacle({
             index: i,
             speed
@@ -104,8 +112,10 @@ export class World {
           perspectiveOrigin: newPerspectiveOrigin,
           position: {
             x: sectionWidth * (Math.random() * 2 - 1),
-            y: 50000 + (itemPosition * i),
-          }
+            y: yPosition + itemPosition * i,
+          },
+          length: itemLength,
+          width: itemLength
         })
       )
     }
@@ -119,8 +129,8 @@ export class World {
         speed,
         width: sectionWidth,
         position: {
-          x: -2500,
-          y: 50000
+          x: -sectionWidth / 2,
+          y: yPosition
         }
       })
     }
@@ -166,15 +176,16 @@ export class World {
   }
 
   stop = () => {
-    clearInterval(this.addObstacleInterval)
+    // clearInterval(this.addObstacleInterval)
     // clearInterval(this.addCloudInterval)
   }
 
   render = () => {
     this.sections.forEach(section => {
-      section.road.render()
+      // section.road.render()
       section.obstacles.forEach(obs => {
-        if (obs.position.y + obs.length > 0) {
+        // TODO: review margin from rendering limit
+        if (obs.position.y + obs.length >= 0) {
           obs.render()
         }
       })
@@ -182,7 +193,9 @@ export class World {
   }
 
   start = () => {
-    this.onChangeSection()
+    for (let i = 0; i < 2; i++) {
+      this.onChangeSection()
+    }
     this.setListeners()
     this.setIntervals()
   }
