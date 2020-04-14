@@ -162,7 +162,7 @@ export class Obstacle {
     }
   }
 
-  update = ({ perspectiveOrigin, position, sun }) => {
+  update = ({ position, sun }) => {
     this.sunPosition = sun.position
     this.perspectiveOrigin = {
       x: this.perspectiveOrigin.x - this.growth.x,
@@ -170,8 +170,7 @@ export class Obstacle {
     }
 
     this.position = {
-      // x: this.position.x - position.x,
-      ...this.position,
+      x: this.position.x - position.x,
       y: this.position.y - this.speed - position.y
     }
   }

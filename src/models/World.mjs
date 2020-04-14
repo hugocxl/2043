@@ -14,6 +14,7 @@ import { utils } from '../utils/index.mjs'
 
 const SECTION_DURATION = 5
 
+
 export class World {
   constructor ({
     ctx,
@@ -38,8 +39,6 @@ export class World {
       x: canvas.width / 2,
       y: canvas.height / 2
     }
-
-    this.sectionInterval = null
   }
 
   setListeners = () => {
@@ -53,14 +52,14 @@ export class World {
   }
 
   setIntervals = () => {
-    // setInterval(this.onKeyPress, 100)
-    this.sectionInterval = setInterval(this.onChangeSection, SECTION_DURATION * 1000)
+    setInterval(this.onKeyPress, 10)
+    // this.sectionInterval = setInterval(this.onChangeSection, SECTION_DURATION * 1000)
   }
 
   onChangeSection = () => {
     const section = this.generateSection()
 
-    if (this.sections.length < 2) {
+    if (this.sections.length < 3) {
       this.sections = [
         section,
         ...this.sections
@@ -77,8 +76,8 @@ export class World {
 
   generateSection = () => {
     let obstacles = []
-    const x = 250 * (Math.random() * 2 - 1)
-    const y = 250 * (Math.random() * 2 - 1)
+    const x = 1 * (Math.random() * 2 - 1)
+    const y = 1 * (Math.random() * 2 - 1)
 
     const previousSection = this.sections.length
       ? this.sections[0]
@@ -89,17 +88,21 @@ export class World {
       : 0
 
     const newPerspectiveOrigin = {
-      x: this.perspectiveOrigin.x + x,
-      y: this.perspectiveOrigin.y + y,
+      x: Math.round(this.perspectiveOrigin.x + x),
+      y: Math.round(this.perspectiveOrigin.y + y),
     }
-
-    const speed = 100
+    //
+    // const newPerspectiveOrigin = this.perspectiveOrigin
+    //
+    const speed = 50
     const sectionLength = speed * 60 * SECTION_DURATION
-    const sectionWidth = sectionLength / 4
-    const nObstacles = 50
+    const sectionWidth = sectionLength / 10
+    const nObstacles = speed / 10
 
-    const itemLength = sectionLength / (nObstacles * 2)
+    const itemLength = sectionLength / (nObstacles * nObstacles)
     const itemPosition = sectionLength / nObstacles
+
+    this.perspectiveOrigin = newPerspectiveOrigin
 
     for (let i = 0; i < nObstacles; i++) {
       obstacles.unshift(
@@ -114,8 +117,9 @@ export class World {
             x: sectionWidth * (Math.random() * 2 - 1),
             y: yPosition + itemPosition * i,
           },
-          length: itemLength,
-          width: itemLength
+          length: 200,
+          width: 200,
+          height: 200
         })
       )
     }
@@ -129,7 +133,7 @@ export class World {
         speed,
         width: sectionWidth,
         position: {
-          x: -sectionWidth / 2,
+          x: 0,
           y: yPosition
         }
       })
@@ -141,7 +145,7 @@ export class World {
       case KEYS.LEFT: {
         this.position = {
           ...this.position,
-          x: this.position.x - 10
+          x: this.position.x - 5
         }
         break
       }
@@ -149,7 +153,7 @@ export class World {
       case KEYS.RIGHT: {
         this.position = {
           ...this.position,
-          x: this.position.x + 10
+          x: this.position.x + 5
         }
         break
       }
@@ -161,6 +165,14 @@ export class World {
       case KEYS.DOWN: {
         break
       }
+
+      default: {
+        this.position = {
+          x: 0,
+          y: 0
+        }
+
+      }
     }
   }
 
@@ -169,22 +181,28 @@ export class World {
   }
 
   update = () => {
-    this.sections.forEach(section => {
-      section.road.update(this)
-      section.obstacles.forEach(obs => obs.update(this))
-    })
-  }
+    const sections = []
 
-  stop = () => {
-    // clearInterval(this.addObstacleInterval)
-    // clearInterval(this.addCloudInterval)
+    this.sections.forEach(section => {
+      if (section.road.position.y + section.road.length >= 0) {
+        section.road.update(this)
+        section.obstacles.forEach(obs => obs.update(this))
+        sections.push(section)
+      } else {
+        sections.unshift(this.generateSection())
+      }
+    })
+
+    this.sections = sections
   }
 
   render = () => {
     this.sections.forEach(section => {
-      // section.road.render()
+      section.road.render()
+    })
+
+    this.sections.forEach(section => {
       section.obstacles.forEach(obs => {
-        // TODO: review margin from rendering limit
         if (obs.position.y + obs.length >= 0) {
           obs.render()
         }
@@ -192,8 +210,11 @@ export class World {
     })
   }
 
+  stop = () => {
+  }
+
   start = () => {
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 1; i++) {
       this.onChangeSection()
     }
     this.setListeners()
