@@ -41,11 +41,17 @@ export class Road {
   getVertex = () => {
     const { position, width, length, canvas } = this
 
+    const topVertix = position.y + canvas.height > canvas.height / 2
+      ? position.y + canvas.height
+      : canvas.height / 2
+
+    const lowVertix = position.y + canvas.height + length
+
     return {
-      v1: { x: position.x, y: position.y + canvas.height },
-      v2: { x: position.x + width, y: position.y + canvas.height },
-      v3: { x: position.x + width, y: position.y + canvas.height + length },
-      v4: { x: position.x, y: position.y + canvas.height + length },
+      v1: { x: position.x, y: topVertix },
+      v2: { x: position.x + width, y: topVertix },
+      v3: { x: position.x + width, y: lowVertix },
+      v4: { x: position.x, y: lowVertix },
     }
   }
 
@@ -75,45 +81,16 @@ export class Road {
     let i3
     let i4
 
-    if (v1.y >= this.canvas.height) {
-      const x1 = { x: 0, y: this.canvas.height }
-      const x2 = { x: 1, y: this.canvas.height }
+    const x1 = { x: 0, y: this.canvas.height }
+    const x2 = { x: 1, y: this.canvas.height }
 
-      const a = this.getIntersectionPoints(v1, v3, x1, x2)
-      const b = this.getIntersectionPoints(v2, v4, x1, x2)
+    const a = this.getIntersectionPoints(v1, v3, x1, x2)
+    const b = this.getIntersectionPoints(v2, v4, x1, x2)
 
-      i1 = this.getIntersectionPoints(a, f2, p1, o)
-      i2 = this.getIntersectionPoints(b, f1, p2, o)
-      i3 = this.getIntersectionPoints(a, f2, p2, o)
-      i4 = this.getIntersectionPoints(b, f1, p1, o)
-    } else {
-      const tan45 = Math.tan(45 * Math.PI / 180)
-
-      const auxV1 = {
-        x: Math.round(p1.x - ((v1.y - p1.y) / tan45)),
-        y: this.canvas.height
-      }
-
-      const auxV2 = {
-        x: Math.round(p2.x - ((v2.y - p2.y) / tan45)),
-        y: this.canvas.height,
-      }
-
-      const auxV3 = {
-        x: Math.round(p2.x - ((v3.y - p2.y) / tan45)),
-        y: this.canvas.height
-      }
-
-      const auxV4 = {
-        x: Math.round(p1.x - ((v4.y - p1.y) / tan45)),
-        y: this.canvas.height
-      }
-
-      i1 = this.getIntersectionPoints(o, p1, auxV1, f2)
-      i2 = this.getIntersectionPoints(o, p2, auxV2, f2)
-      i3 = this.getIntersectionPoints(o, p2, auxV3, f2)
-      i4 = this.getIntersectionPoints(o, p1, auxV4, f2)
-    }
+    i1 = this.getIntersectionPoints(a, f2, p1, o)
+    i2 = this.getIntersectionPoints(b, f1, p2, o)
+    i3 = this.getIntersectionPoints(a, f2, p2, o)
+    i4 = this.getIntersectionPoints(b, f1, p1, o)
 
     return {
       o,

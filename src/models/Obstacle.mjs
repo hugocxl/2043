@@ -305,21 +305,9 @@ export class Obstacle {
     }
   }
 
-  test = ({ i1, i2, i3, i4 }) => {
-    this.ctx.beginPath()
-    this.ctx.moveTo(i1.x, i1.y)
-    this.ctx.lineTo(i2.x, i2.y)
-    this.ctx.lineTo(i3.x, i3.y)
-    this.ctx.lineTo(i4.x, i4.y)
-    this.ctx.lineTo(i1.x, i1.y)
-    this.ctx.closePath()
-    this.ctx.fillStyle = `black`
-    this.ctx.fill()
-  }
-
   render = () => {
     const points = this.getPoints()
-    this.renderBaseLine(points)
+    // this.renderBaseLine(points)
     // this.renderShadow(points)
     this.renderFaces(points)
   }

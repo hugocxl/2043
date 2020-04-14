@@ -14,7 +14,6 @@ import { utils } from '../utils/index.mjs'
 
 const SECTION_DURATION = 5
 
-
 export class World {
   constructor ({
     ctx,
@@ -59,7 +58,7 @@ export class World {
   onChangeSection = () => {
     const section = this.generateSection()
 
-    if (this.sections.length < 3) {
+    if (this.sections.length < 1) {
       this.sections = [
         section,
         ...this.sections
@@ -76,8 +75,8 @@ export class World {
 
   generateSection = () => {
     let obstacles = []
-    const x = 1 * (Math.random() * 2 - 1)
-    const y = 1 * (Math.random() * 2 - 1)
+    const x = 250 * (Math.random() * 2 - 1)
+    const y = 250 * (Math.random() * 2 - 1)
 
     const previousSection = this.sections.length
       ? this.sections[0]
@@ -99,7 +98,7 @@ export class World {
     const sectionWidth = sectionLength / 10
     const nObstacles = speed / 10
 
-    const itemLength = sectionLength / (nObstacles * nObstacles)
+    const itemLength = sectionLength / nObstacles
     const itemPosition = sectionLength / nObstacles
 
     this.perspectiveOrigin = newPerspectiveOrigin
@@ -117,9 +116,9 @@ export class World {
             x: sectionWidth * (Math.random() * 2 - 1),
             y: yPosition + itemPosition * i,
           },
-          length: 200,
-          width: 200,
-          height: 200
+          length: itemLength,
+          width: itemLength,
+          height: itemLength
         })
       )
     }
