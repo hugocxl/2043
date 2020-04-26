@@ -5,15 +5,13 @@ import { utils } from '../utils/index.mjs'
 import { SCALE_UNIT } from '../constants/index.mjs'
 
 export class Obstacle {
-  constructor ({ length, width, ctx, canvas, position, height, perspectiveOrigin, speed, color, sun }) {
+  constructor ({ length, width, ctx, canvas, position, height, color }) {
     this.length = length
     this.width = width
     this.height = height
     this.ctx = ctx
     this.canvas = canvas
     this.position = position
-    this.perspectiveOrigin = perspectiveOrigin
-    this.sunPosition = sun.position
     this.color = [
       150,
       150,
@@ -21,21 +19,15 @@ export class Obstacle {
     ]
   }
 
-  getVanishingPoints = () => {
+  getVanishingPoints = ({ perspectiveOrigin: { x, y } }) => {
     return {
-      o: this.perspectiveOrigin,
-      f1: {
-        ...this.perspectiveOrigin,
-        x: this.perspectiveOrigin.x - config.viewPointHeight
-      },
-      f2: {
-        ...this.perspectiveOrigin,
-        x: this.perspectiveOrigin.x + config.viewPointHeight
-      },
+      o: { x, y },
+      f1: { x: x - config.viewPointHeight, y },
+      f2: { x: x + config.viewPointHeight, y },
     }
   }
 
-  getVertex = (sectionPosition) => {
+  getVertex = ({ sectionPosition }) => {
     const { position, width, length, canvas } = this
 
     return {
@@ -46,7 +38,7 @@ export class Obstacle {
     }
   }
 
-  getProyectionPoints = (sectionPosition) => {
+  getProyectionPoints = ({ sectionPosition }) => {
     return {
       p1: { x: this.position.x + sectionPosition.x, y: this.canvas.height },
       p2: { x: this.position.x + this.width + sectionPosition.x, y: this.canvas.height },
@@ -57,13 +49,14 @@ export class Obstacle {
     return utils.getIntersectionPointsBetween2Lines(pA1, pA2, pB1, pB2)
   }
 
-  getPoints = (sectionPosition) => {
-    const { v1, v2, v3, v4 } = this.getVertex(sectionPosition)
-    const { f1, f2, o } = this.getVanishingPoints()
-    const { p1, p2 } = this.getProyectionPoints(sectionPosition)
+  getPoints = props => {
+    const { v1, v2, v3, v4 } = this.getVertex(props)
+    const { f1, f2, o } = this.getVanishingPoints(props)
+    const { p1, p2 } = this.getProyectionPoints(props)
+    const { sun } = props
 
     const sunProyection = {
-      ...this.sunPosition,
+      ...sun.position,
       y: this.canvas.height / 2
     }
 
@@ -97,9 +90,9 @@ export class Obstacle {
       i6 = this.getIntersectionPoints(i2, { x: i2.x, y: 0 }, o, h2)
       i7 = this.getIntersectionPoints(i3, { x: i3.x, y: 0 }, o, h2)
       i8 = this.getIntersectionPoints(i4, { x: i4.x, y: 0 }, o, h1)
-      s1 = this.getIntersectionPoints(i2, sunProyection, i6, this.sunPosition)
-      s2 = this.getIntersectionPoints(i1, sunProyection, i5, this.sunPosition)
-      s3 = this.getIntersectionPoints(i4, sunProyection, i8, this.sunPosition)
+      s1 = this.getIntersectionPoints(i2, sunProyection, i6, sun.position)
+      s2 = this.getIntersectionPoints(i1, sunProyection, i5, sun.position)
+      s3 = this.getIntersectionPoints(i4, sunProyection, i8, sun.position)
     } else {
       const tan45 = Math.tan(45 * Math.PI / 180)
 
@@ -283,8 +276,8 @@ export class Obstacle {
     }
   }
 
-  render = (position) => {
-    const points = this.getPoints(position)
+  render = props => {
+    const points = this.getPoints(props)
 
     // this.renderBaseLine(points)
     // this.renderShadow(points)

@@ -60,9 +60,9 @@ export class World {
 
   generateSection = () => {
     const previousSection = this.sections[0]
-    const sectionLength = 100
+    const sectionLength = this.canvas.width / 2
     const sectionWidth = this.canvas.width
-    const nObstacles = 1
+    const nObstacles = 2
     const itemPositionOffset = sectionLength / nObstacles
     const xPosition = 0
     const yPosition = previousSection
@@ -71,7 +71,7 @@ export class World {
 
     const obstacles = []
 
-    for (let i = 0; i < 1; i++) {
+    for (let i = 0; i < nObstacles; i++) {
       obstacles.unshift(
         new Obstacle({
           ...this,
@@ -79,9 +79,9 @@ export class World {
             x: 0,
             y: 0 + itemPositionOffset * i,
           },
-          length: sectionLength,
-          width: sectionWidth / 4,
-          height: sectionLength * 10 * Math.random()
+          length: sectionLength / nObstacles,
+          width: sectionWidth * 0.6,
+          height: (sectionLength / 4) * Math.random()
         })
       )
     }
@@ -90,10 +90,6 @@ export class World {
       ...this,
       length: sectionLength,
       width: sectionWidth,
-      position: {
-        x: 0,
-        y: 0
-      }
     })
 
     return {
@@ -152,7 +148,7 @@ export class World {
     const sections = []
 
     this.sections.forEach(section => {
-      if (section.position.y >= 0) {
+      if (section.position.y + section.length >= 0) {
         sections.push({
           ...section,
           position: {
@@ -169,13 +165,19 @@ export class World {
   }
 
   render = () => {
-    // this.sections.forEach(({ position, road }) => {
-    //   road.render(position)
-    // })
+    this.sections.forEach(({ position, road }) => {
+      road.render({
+        ...this,
+        sectionPosition: position,
+      })
+    })
 
     this.sections.forEach(({ position, obstacles }) => {
       obstacles.forEach(obs => {
-        obs.render(position)
+        obs.render({
+          ...this,
+          sectionPosition: position,
+        })
       })
     })
   }

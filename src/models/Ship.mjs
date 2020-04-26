@@ -46,8 +46,8 @@ export class Ship {
         if (this.translate > -7) {
           this.translate -= 0.5
         }
-        // this.ship.style.transform = 'translateX(-15px) rotate(-0deg)'
-        // this.ship.style.transition = 'none'
+        // this.ship.styles.transform = 'translateX(-15px) rotate(-0deg)'
+        // this.ship.styles.transition = 'none'
         break
       }
 
@@ -56,7 +56,7 @@ export class Ship {
           this.translate += 0.5
         }
         this.ship.style.transform = 'translateX(50px)'
-        // this.ship.style.transition = 'none'
+        // this.ship.styles.transition = 'none'
         break
       }
 

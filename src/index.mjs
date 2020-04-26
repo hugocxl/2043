@@ -19,7 +19,7 @@ window.onload = function () {
     const y = Math.round(Math.random()) * 2 - 1
 
     canvas.style.transform = `translate(${x}px, ${y}px)`
-    // ship.style.transform = `translate(${-y}px, ${-x}px)`
+    // ship.styles.transform = `translate(${-y}px, ${-x}px)`
   }
 
   function setIntervals () {
