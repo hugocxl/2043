@@ -12,21 +12,13 @@ export class Obstacle {
     this.ctx = ctx
     this.canvas = canvas
     this.position = position
-    this.lockedPoints = {}
     this.perspectiveOrigin = perspectiveOrigin
     this.sunPosition = sun.position
-    this.speed = speed
     this.color = [
       150,
       150,
       150
     ]
-    this.n = position.y / speed
-    this.growth = {
-      x: (perspectiveOrigin.x - canvas.width / 2) / (position.y / speed),
-      y: (perspectiveOrigin.y - canvas.height / 2) / (position.y / speed),
-    }
-    this.calls = 0
   }
 
   getVanishingPoints = () => {
@@ -43,37 +35,32 @@ export class Obstacle {
     }
   }
 
-  getVertex = () => {
+  getVertex = (sectionPosition) => {
     const { position, width, length, canvas } = this
 
     return {
-      v1: { x: position.x, y: position.y + canvas.height },
-      v2: { x: position.x + width, y: position.y + canvas.height },
-      v3: { x: position.x + width, y: position.y + canvas.height + length },
-      v4: { x: position.x, y: position.y + canvas.height + length },
+      v1: { x: position.x + sectionPosition.x, y: position.y + canvas.height + sectionPosition.y },
+      v2: { x: position.x + width + sectionPosition.x, y: position.y + canvas.height + sectionPosition.y },
+      v3: { x: position.x + width + sectionPosition.x, y: position.y + canvas.height + length + sectionPosition.y },
+      v4: { x: position.x + sectionPosition.x, y: position.y + canvas.height + length + sectionPosition.y },
     }
   }
 
-  getProyectionPoints = () => {
+  getProyectionPoints = (sectionPosition) => {
     return {
-      p1: { x: this.position.x, y: this.canvas.height },
-      p2: { x: this.position.x + this.width, y: this.canvas.height },
+      p1: { x: this.position.x + sectionPosition.x, y: this.canvas.height },
+      p2: { x: this.position.x + this.width + sectionPosition.x, y: this.canvas.height },
     }
   }
 
   getIntersectionPoints = (pA1, pA2, pB1, pB2) => {
-    const { x, y } = utils.getIntersectionPointsBetween2Lines(pA1, pA2, pB1, pB2)
-
-    return {
-      x,
-      y
-    }
+    return utils.getIntersectionPointsBetween2Lines(pA1, pA2, pB1, pB2)
   }
 
-  getPoints = () => {
-    const { v1, v2, v3, v4 } = this.getVertex()
+  getPoints = (sectionPosition) => {
+    const { v1, v2, v3, v4 } = this.getVertex(sectionPosition)
     const { f1, f2, o } = this.getVanishingPoints()
-    const { p1, p2 } = this.getProyectionPoints()
+    const { p1, p2 } = this.getProyectionPoints(sectionPosition)
 
     const sunProyection = {
       ...this.sunPosition,
@@ -162,19 +149,6 @@ export class Obstacle {
     }
   }
 
-  update = ({ position, sun }) => {
-    this.sunPosition = sun.position
-    this.perspectiveOrigin = {
-      x: this.perspectiveOrigin.x - this.growth.x,
-      y: this.perspectiveOrigin.y - this.growth.y,
-    }
-
-    this.position = {
-      x: this.position.x - position.x,
-      y: this.position.y - this.speed - position.y
-    }
-  }
-
   renderBaseLine = () => {
     const { i1, i3, i2, i4 } = this.getPoints()
 
@@ -230,21 +204,25 @@ export class Obstacle {
   }
 
   renderShadow = ({ o, i1, i2, i3, i4, i5, i8, i6, i7, s1, s2, s3 }) => {
-    this.ctx.beginPath()
-    this.ctx.moveTo(i1.x, i1.y)
-    this.ctx.lineTo(i2.x, i2.y)
-    this.ctx.lineTo(s1.x, s1.y)
-    this.ctx.lineTo(s2.x, s2.y)
-    this.ctx.lineTo(s3.x, s3.y)
-    this.ctx.lineTo(i4.x, i4.y)
-    this.ctx.lineTo(i1.x, i1.y)
-    this.ctx.closePath()
-    this.ctx.fillStyle = `rgb(0, 0, 0, 0.1)`
-    this.ctx.fill()
+    if (s1 && s2 && s3) {
+      this.ctx.beginPath()
+      this.ctx.moveTo(i1.x, i1.y)
+
+      this.ctx.lineTo(i2.x, i2.y)
+      this.ctx.lineTo(s1.x, s1.y)
+      this.ctx.lineTo(s2.x, s2.y)
+      this.ctx.lineTo(s3.x, s3.y)
+      this.ctx.lineTo(i4.x, i4.y)
+      this.ctx.lineTo(i1.x, i1.y)
+
+      this.ctx.closePath()
+
+      this.ctx.fillStyle = `rgb(0, 0, 0, 0.1)`
+      this.ctx.fill()
+    }
   }
 
   renderFaces = ({ o, i1, i2, i3, i4, i5, i8, i6, i7, s1, s2, s3 }) => {
-
     this.ctx.beginPath()
     this.ctx.moveTo(i1.x, i1.y)
     this.ctx.lineTo(i2.x, i2.y)
@@ -305,8 +283,9 @@ export class Obstacle {
     }
   }
 
-  render = () => {
-    const points = this.getPoints()
+  render = (position) => {
+    const points = this.getPoints(position)
+
     // this.renderBaseLine(points)
     // this.renderShadow(points)
     this.renderFaces(points)

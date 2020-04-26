@@ -12,9 +12,12 @@ function getIntersectionPointsBetween2Lines (pA1, pA2, pB1, pB2) {
 
   let ua = ((pB2.x - pB1.x) * (pA1.y - pB1.y) - (pB2.y - pB1.y) * (pA1.x - pB1.x)) / denominator
 
+  const x = Math.round(pA1.x + ua * (pA2.x - pA1.x))
+  const y = Math.round(pA1.y + ua * (pA2.y - pA1.y))
+
   return {
-    x: pA1.x + ua * (pA2.x - pA1.x),
-    y: pA1.y + ua * (pA2.y - pA1.y)
+    x,
+    y
   }
 }
 

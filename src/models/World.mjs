@@ -12,7 +12,9 @@ import { config } from '../config/index.mjs'
 // Utils
 import { utils } from '../utils/index.mjs'
 
-const SECTION_DURATION = 5
+const SECTION_DURATION = 1
+const NUMBER_OF_SECTIONS = 50
+const SECTION_LENGTH = 100
 
 export class World {
   constructor ({
@@ -22,6 +24,7 @@ export class World {
     perspectiveOrigin,
     config
   }) {
+    this.speed = 10
     this.ctx = ctx
     this.canvas = canvas
     this.config = config
@@ -55,87 +58,53 @@ export class World {
     // this.sectionInterval = setInterval(this.onChangeSection, SECTION_DURATION * 1000)
   }
 
-  onChangeSection = () => {
-    const section = this.generateSection()
-
-    if (this.sections.length < 1) {
-      this.sections = [
-        section,
-        ...this.sections
-      ]
-    } else {
-      this.sections.pop()
-
-      this.sections = [
-        section,
-        ...this.sections
-      ]
-    }
-  }
-
   generateSection = () => {
-    let obstacles = []
-    const x = 250 * (Math.random() * 2 - 1)
-    const y = 250 * (Math.random() * 2 - 1)
-
-    const previousSection = this.sections.length
-      ? this.sections[0]
-      : null
-
+    const previousSection = this.sections[0]
+    const sectionLength = 100
+    const sectionWidth = this.canvas.width
+    const nObstacles = 1
+    const itemPositionOffset = sectionLength / nObstacles
+    const xPosition = 0
     const yPosition = previousSection
-      ? previousSection.road.position.y + previousSection.road.length
+      ? previousSection.position.y + previousSection.length
       : 0
 
-    const newPerspectiveOrigin = {
-      x: Math.round(this.perspectiveOrigin.x + x),
-      y: Math.round(this.perspectiveOrigin.y + y),
-    }
-    //
-    // const newPerspectiveOrigin = this.perspectiveOrigin
-    //
-    const speed = 50
-    const sectionLength = speed * 60 * SECTION_DURATION
-    const sectionWidth = sectionLength / 10
-    const nObstacles = speed / 10
+    const obstacles = []
 
-    const itemLength = sectionLength / nObstacles
-    const itemPosition = sectionLength / nObstacles
-
-    this.perspectiveOrigin = newPerspectiveOrigin
-
-    for (let i = 0; i < nObstacles; i++) {
+    for (let i = 0; i < 1; i++) {
       obstacles.unshift(
         new Obstacle({
           ...this,
-          ...utils.generateObstacle({
-            index: i,
-            speed
-          }),
-          perspectiveOrigin: newPerspectiveOrigin,
           position: {
-            x: sectionWidth * (Math.random() * 2 - 1),
-            y: yPosition + itemPosition * i,
+            x: 0,
+            y: 0 + itemPositionOffset * i,
           },
-          length: itemLength,
-          width: itemLength,
-          height: itemLength
+          length: sectionLength,
+          width: sectionWidth / 4,
+          height: sectionLength * 10 * Math.random()
         })
       )
     }
 
+    const road = new Road({
+      ...this,
+      length: sectionLength,
+      width: sectionWidth,
+      position: {
+        x: 0,
+        y: 0
+      }
+    })
+
     return {
       obstacles,
-      road: new Road({
-        ...this,
-        perspectiveOrigin: newPerspectiveOrigin,
-        length: sectionLength,
-        speed,
-        width: sectionWidth,
-        position: {
-          x: 0,
-          y: yPosition
-        }
-      })
+      road,
+      length: sectionLength,
+      width: sectionWidth,
+      position: {
+        x: xPosition,
+        y: yPosition
+      },
     }
   }
 
@@ -183,10 +152,14 @@ export class World {
     const sections = []
 
     this.sections.forEach(section => {
-      if (section.road.position.y + section.road.length >= 0) {
-        section.road.update(this)
-        section.obstacles.forEach(obs => obs.update(this))
-        sections.push(section)
+      if (section.position.y >= 0) {
+        sections.push({
+          ...section,
+          position: {
+            ...section.position,
+            y: section.position.y - this.speed
+          }
+        })
       } else {
         sections.unshift(this.generateSection())
       }
@@ -196,15 +169,13 @@ export class World {
   }
 
   render = () => {
-    this.sections.forEach(section => {
-      section.road.render()
-    })
+    // this.sections.forEach(({ position, road }) => {
+    //   road.render(position)
+    // })
 
-    this.sections.forEach(section => {
-      section.obstacles.forEach(obs => {
-        if (obs.position.y + obs.length >= 0) {
-          obs.render()
-        }
+    this.sections.forEach(({ position, obstacles }) => {
+      obstacles.forEach(obs => {
+        obs.render(position)
       })
     })
   }
@@ -213,9 +184,10 @@ export class World {
   }
 
   start = () => {
-    for (let i = 0; i < 1; i++) {
-      this.onChangeSection()
+    for (let i = 0; i < NUMBER_OF_SECTIONS; i++) {
+      this.sections.unshift(this.generateSection())
     }
+
     this.setListeners()
     this.setIntervals()
   }
