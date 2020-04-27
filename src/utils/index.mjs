@@ -68,7 +68,7 @@ function generateCloud ({ u, color }) {
   // }
 }
 
-function generateWorld (i) {
+function generateLevel (i) {
   const u = i
   const color = 50
 
@@ -92,5 +92,5 @@ export const utils = {
   getIntersectionPointsBetween2Lines,
   generateCloud,
   generateObstacle,
-  generateWorld,
+  generateLevel,
 }

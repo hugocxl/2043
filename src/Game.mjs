@@ -1,7 +1,7 @@
 'use strict'
 
-// Models
-import { Ship, World } from './models/index.mjs'
+// Controllers
+import { Level } from './controllers/Level.mjs'
 
 // Config
 import { config } from './config/index.mjs'
@@ -20,20 +20,20 @@ export class Game {
     this.processIntervals = null
     this.timer = document.getElementById('x2043__board-score-timer')
     this.timerInterval = null
-    this.worldInterval = null
+    this.levelInterval = null
     this.duration = 0
     this.ship = null
-    this.world = new World({
+    this.level = new Level({
       ...this,
-      config: utils.generateWorld(1),
+      config: utils.generateLevel(1),
     })
 
-    this.worldLevel = 1
+    this.levelLevel = 1
   }
 
   setIntervals = () => {
     this.timerInterval = setInterval(this.setTime, 1000)
-    // this.worldInterval = setInterval(this.setWorld, config.levelDuration)
+    // this.levelInterval = setInterval(this.setLevel, config.levelDuration)
   }
 
   setTime = () => {
@@ -47,14 +47,14 @@ export class Game {
     this.timer.innerText = minutes + ':' + seconds
   }
 
-  setWorld = () => {
-    // this.world.stop()
-    this.worldLevel++
+  setLevel = () => {
+    // this.level.stop()
+    this.levelLevel++
 
     setTimeout(() => {
-      this.world.onWorldChange(utils.generateWorld(this.worldLevel))
+      this.level.onLevelChange(utils.generateLevel(this.levelLevel))
 
-      this.world.start()
+      this.level.start()
     }, config.timeBetweenLevels)
   }
 
@@ -62,11 +62,11 @@ export class Game {
     // this.ship = new Ship(this)
 
     // this.ship.start()
-    this.world.start()
+    this.level.start()
   }
 
   update = () => {
-    this.world.update(this)
+    this.level.update(this)
   }
 
   clearCanvas = () => {
@@ -76,14 +76,14 @@ export class Game {
   }
 
   render = () => {
-    this.world.render()
+    this.level.render()
     // this.ship.render()
   }
 
   stop = () => {
     cancelAnimationFrame(this.renderInterval)
     clearInterval(this.timerInterval)
-    clearInterval(this.worldInterval)
+    clearInterval(this.levelInterval)
   }
 
   start = () => {

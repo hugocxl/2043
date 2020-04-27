@@ -1,7 +1,7 @@
 'use strict'
 
 // Models
-import { Cloud, Obstacle, Road } from './index.mjs'
+import { Cloud, Obstacle, Road } from '../components/index.mjs'
 
 // Constants
 import { CLOUD, OBSTACLE, KEYS } from '../constants/index.mjs'
@@ -140,7 +140,7 @@ export class Level {
     }
   }
 
-  onWorldChange = config => {
+  onLevelChange = config => {
     this.config = config
   }
 
