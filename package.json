@@ -2,7 +2,7 @@
   "name": "ion",
   "version": "1.0.0",
   "description": "A html canvas-based game.",
-  "author": "Hugo Corta Lorenzo <corta.hugo@gmail.com>",
+  "author": "Hugo Corta <corta.hugo@gmail.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -10,9 +10,6 @@
   },
   "homepage": "https://hcorta.github.io/ion",
   "main": "index.js",
-  "dependencies": {
-    "react": "^16.13.1"
-  },
   "devDependencies": {
     "browser-sync": "^2.24.4"
   },
